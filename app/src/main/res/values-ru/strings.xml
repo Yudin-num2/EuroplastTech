@@ -1,0 +1,27 @@
+<resources>
+    <string name="authorization_label">Авторизация</string>
+    <string name="login_label">Логин</string>
+    <string name="password_label">Пароль</string>
+    <string name="remember_me_label">Запомнить меня</string>
+    <string name="auth_button_text">Войти</string>
+    <string name="CurrentTasks">Текущие задачи</string>
+    <string name="Sockets">Гнезда</string>
+    <string name="register_a_defect">Зарегистрировать дефект</string>
+    <string name="register_a_anomaly">Зарегистрировать аномалию</string>
+    <string name="underfilling">Недолив</string>
+    <string name="dirt">Грязь</string>
+    <string name="needle_chipping">Скол иглы</string>
+    <string name="flash_by_closure">Облой по смыканию</string>
+    <string name="crack">Трещина</string>
+    <string name="hole">Отверстие</string>
+    <string name="gate_valve">Литник</string>
+    <string name="not_warm">Не греет</string>
+    <string name="geometry">Геометрия</string>
+    <string name="water">Вода</string>
+    <string name="good_socket">В работе</string>
+    <string name="save_and_exit">Сохранить и выйти</string>
+    <string name="selected_socket">Выбрано гнездо №</string>
+    <string name="select_reason">Выберите причину</string>
+    <string name="checking_data">Проверка введённых данных</string>
+    <string name="socket">Гнездо</string>
+</resources>
