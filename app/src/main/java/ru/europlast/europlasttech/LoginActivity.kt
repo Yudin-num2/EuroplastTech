@@ -1,7 +1,6 @@
 package ru.europlast.europlasttech
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -20,9 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,32 +33,46 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.europlast.europlasttech.ui.theme.EuroplastTechTheme
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import ru.europlast.europlasttech.ui.theme.EvpCyan
 import ru.europlast.europlasttech.ui.theme.ThumbChecked
 import ru.europlast.europlasttech.ui.theme.ThumbUnchecked
 import ru.europlast.europlasttech.ui.theme.TrackChecked
 import ru.europlast.europlasttech.ui.theme.TrackUnchecked
 import ru.europlast.europlasttech.ui.theme.WhiteTransparent
-import kotlin.math.log
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            LoginScreen()
+            Navigation()
         }
     }
 }
-@Preview
 @Composable
-fun LoginScreen() {
+fun Navigation(){
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = Screens.LoginScreen.route) {
+        composable(Screens.LoginScreen.route) {
+            LoginScreen(navController = navController)
+        }
+        composable(Screens.MainScreen.route) {
+            MainScreen()
+        }
+    }
+
+}
+@Composable
+fun LoginScreen(navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -168,7 +179,10 @@ fun LoginScreen() {
             }
             Spacer(modifier = Modifier.height(80.dp))
 
-            Button(onClick = { println("click") },
+            Button(onClick = { //Надо отправлять запрос на веб-сервер REST API,
+                             // но сначала валидация и шифрование //
+                             navController.navigate(Screens.MainScreen.route)
+            },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp),
