@@ -8,6 +8,7 @@
     <string name="Sockets">Гнезда</string>
     <string name="register_a_defect">Зарегистрировать дефект</string>
     <string name="register_a_anomaly">Зарегистрировать аномалию</string>
+    <string name="choose_machine">Выберите машину</string>
     <string name="underfilling">Недолив</string>
     <string name="dirt">Грязь</string>
     <string name="needle_chipping">Скол иглы</string>

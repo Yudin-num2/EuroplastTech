@@ -16,6 +16,8 @@
     <string name="lid_12" translatable="false">Lid 12</string>
     <string name="frame_12" translatable="false">Frame 12</string>
     <string name="cutter_12" translatable="false">Cutter 12</string>
+    <string name="choose_machine">Choose a machine</string>
+
 
     <!--    Socket reasons    -->
     <string name="underfilling">Underfilling</string>
