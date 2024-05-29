@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,19 +59,9 @@ class LoginActivity : ComponentActivity() {
         }
     }
 }
-@Composable
-fun Navigation(){
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screens.LoginScreen.route) {
-        composable(Screens.LoginScreen.route) {
-            LoginScreen(navController = navController)
-        }
-        composable(Screens.MainScreen.route) {
-            MainScreen()
-        }
-    }
 
-}
+
+
 @Composable
 fun LoginScreen(navController: NavController) {
     Box(
@@ -141,6 +132,7 @@ fun LoginScreen(navController: NavController) {
                     value = password.value,
                     onValueChange = { password.value = it },
                     textStyle = TextStyle(color = Color.Black),
+                    visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -181,7 +173,9 @@ fun LoginScreen(navController: NavController) {
 
             Button(onClick = { //Надо отправлять запрос на веб-сервер REST API,
                              // но сначала валидация и шифрование //
-                             navController.navigate(Screens.MainScreen.route)
+                             navController.navigate(Screens.MainScreen.route){
+                                 popUpTo("login") { inclusive = true }
+                             }
             },
                     modifier = Modifier
                         .fillMaxWidth()

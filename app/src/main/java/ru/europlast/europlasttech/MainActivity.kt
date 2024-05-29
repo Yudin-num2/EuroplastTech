@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardElevation
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Dialog
-import androidx.wear.compose.material.MaterialTheme
+import androidx.navigation.NavController
 import ru.europlast.europlasttech.ui.theme.WhiteTransparent
 
 
@@ -54,15 +55,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MainScreen()
+            Navigation()
 
         }
     }
 }
 
-@Preview
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavController) {
 
     var isDialogVisible by remember { mutableStateOf(false) }
 
@@ -155,13 +155,14 @@ fun MainScreen() {
         }
     }
     if(isDialogVisible){
-        CustomDialog(onDismiss = { isDialogVisible = false })
+        CustomDialog(onDismiss = { isDialogVisible = false }, navController = navController)
     }
 }
 
 @Composable
 fun CustomDialog(
     onDismiss:()->Unit,
+    navController: NavController,
 ) {
     Dialog(
         onDismissRequest = {
@@ -193,7 +194,8 @@ fun CustomDialog(
                     textAlign = TextAlign.Center,
                 )
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        navController.navigate(Screens.SocketsT01Screen.route) },
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
                         .padding(top = 20.dp),
@@ -298,6 +300,7 @@ fun CustomDialog(
                             textAlign = TextAlign.Center,
                             fontSize = 26.sp,
                             color = Color.Black
+
                         ))
                 }
             }
