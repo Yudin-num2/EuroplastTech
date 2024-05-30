@@ -1,116 +1,105 @@
 package ru.europlast.europlasttech.sockets
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Tab
-
-import androidx.compose.material3.Text
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.google.accompanist.pager.ExperimentalPagerApi
-import androidx.navigation.NavController
-import kotlinx.coroutines.launch
-import ru.europlast.europlasttech.Navigation
-import ru.europlast.europlasttech.R
+import androidx.compose.ui.zIndex
+import com.google.accompanist.pager.*
 
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun SocketScreen(list: List<String>) {
+    val pagerState = rememberPagerState()
+    val defaultIndicator = @Composable { tabPositions: List<TabPosition> ->
+        TabRowDefaults.Indicator(
+            Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+        )
+    }
+    val indicator = @Composable { tabPositions: List<TabPosition> ->
+        CustomIndicator(tabPositions, pagerState)
+    }
 
-class SocketActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            Navigation()
+    ScrollableTabRow(
+        modifier = Modifier.height(50.dp),
+        selectedTabIndex = pagerState.currentPage,
+        indicator = indicator
+    ) {
+        list.forEachIndexed { index, title ->
+            Tab(
+                modifier = Modifier.zIndex(6f),
+                text = { Text(text = title) },
+                selected = pagerState.currentPage == index,
+                onClick = { /* TODO */ },
+            )
+        }
+    }
+
+    HorizontalPager(
+        modifier = Modifier.fillMaxSize(),
+        count = list.size,
+        state = pagerState,
+    ) { page ->
+        Box(Modifier.fillMaxSize()) {
+            Text(modifier = Modifier.align(Alignment.Center), text = "Page $page")
         }
     }
 }
-@OptIn(ExperimentalFoundationApi::class)
-@ExperimentalPagerApi
+
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun SocketScreen(navController: NavController) {
-
-    val pagerState = rememberPagerState(pageCount = {3})
-    val coroutineScope = rememberCoroutineScope()
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_background_img),
-            contentDescription = "background_img",
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        Column {
-            TabRow(selectedTabIndex = pagerState.currentPage,
-                modifier = Modifier.padding(top = 30.dp)) {
-                Tab(
-                    selected = pagerState.currentPage == 0,
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(0)
-                        }
-                    }
-                ) {
-                    Text(text = "Lid", fontSize = 20.sp)
-                }
-
-                Tab(
-                    selected = pagerState.currentPage == 1,
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(1)
-                        }
-                    }
-                ) {
-                    Text(text = "Frame", fontSize = 20.sp)
-                }
-
-                Tab(
-                    selected = pagerState.currentPage == 2,
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(2)
-                        }
-                    }
-                ) {
-                    Text(text = "Cutter",
-                        fontSize = 20.sp,
-                        modifier = Modifier.padding(20.dp))
-                }
+private fun CustomIndicator(tabPositions: List<TabPosition>, pagerState: PagerState) {
+    val transition = updateTransition(pagerState.currentPage)
+    val indicatorStart by transition.animateDp(
+        transitionSpec = {
+            if (initialState < targetState) {
+                spring(dampingRatio = 1f, stiffness = 50f)
+            } else {
+                spring(dampingRatio = 1f, stiffness = 1000f)
             }
-
-            HorizontalPager(
-                state = pagerState,
-                userScrollEnabled = true,
-            ) { page ->
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "Page $page", fontSize = 30.sp)
-                }
-            }
-        }
+        }, label = ""
+    ) {
+        tabPositions[it].left
     }
+
+    val indicatorEnd by transition.animateDp(
+        transitionSpec = {
+            if (initialState < targetState) {
+                spring(dampingRatio = 1f, stiffness = 1000f)
+            } else {
+                spring(dampingRatio = 1f, stiffness = 50f)
+            }
+        }, label = ""
+    ) {
+        tabPositions[it].right
+    }
+
+    Box(
+        Modifier
+            .offset(x = indicatorStart)
+            .wrapContentSize(align = Alignment.BottomStart)
+            .width(indicatorEnd - indicatorStart)
+            .padding(2.dp)
+            .fillMaxSize()
+            .background(color = Color(0xFFFF7455), RoundedCornerShape(50))
+            .border(BorderStroke(2.dp, Color(0xFFC13D25)), RoundedCornerShape(50))
+            .zIndex(1f)
+    )
 }
