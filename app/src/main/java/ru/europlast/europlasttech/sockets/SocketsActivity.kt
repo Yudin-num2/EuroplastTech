@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -16,51 +17,73 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.google.accompanist.pager.*
+import kotlinx.coroutines.launch
+import ru.europlast.europlasttech.R
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SocketScreen(list: List<String>) {
     val pagerState = rememberPagerState()
-    val defaultIndicator = @Composable { tabPositions: List<TabPosition> ->
-        TabRowDefaults.Indicator(
-            Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
-        )
-    }
+//    val defaultIndicator = @Composable { tabPositions: List<TabPosition> ->
+//        TabRowDefaults.Indicator(
+//            Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+//        )
+//    }
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomIndicator(tabPositions, pagerState)
     }
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 30.dp)) {
+//    val coroutineScope = rememberCoroutineScope()
+        ScrollableTabRow(
+            modifier = Modifier
+                .height(50.dp),
+            selectedTabIndex = pagerState.currentPage,
+            indicator = indicator
+        ) {
+            list.forEachIndexed { index, title ->
+                Tab(
+                    modifier = Modifier.zIndex(6f),
+                    text = { Text(text = title) },
+                    selected = pagerState.currentPage == index,
+                    onClick = { //coroutineScope.launch {
+                        //pagerState.animateScrollToPage(index)}
+                    },
+                )
+            }
+        }
 
-    ScrollableTabRow(
-        modifier = Modifier.height(50.dp),
-        selectedTabIndex = pagerState.currentPage,
-        indicator = indicator
-    ) {
-        list.forEachIndexed { index, title ->
-            Tab(
-                modifier = Modifier.zIndex(6f),
-                text = { Text(text = title) },
-                selected = pagerState.currentPage == index,
-                onClick = { /* TODO */ },
-            )
+        HorizontalPager(
+            modifier = Modifier
+                .fillMaxWidth(),
+            count = list.size,
+            state = pagerState,
+        ) { page ->
+            Box(Modifier.fillMaxSize()) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_background_img),
+                    contentDescription = "background_img",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 50.dp)
+                )
+//            LidSockets48()
+            }
         }
     }
 
-    HorizontalPager(
-        modifier = Modifier.fillMaxSize(),
-        count = list.size,
-        state = pagerState,
-    ) { page ->
-        Box(Modifier.fillMaxSize()) {
-            Text(modifier = Modifier.align(Alignment.Center), text = "Page $page")
-        }
-    }
 }
 
 @OptIn(ExperimentalPagerApi::class)
