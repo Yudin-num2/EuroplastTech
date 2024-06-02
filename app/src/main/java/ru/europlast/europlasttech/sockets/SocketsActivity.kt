@@ -32,7 +32,7 @@ import ru.europlast.europlasttech.R
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun SocketScreen(list: List<String>) {
+fun SocketScreen(machineName: String, list: List<String>) {
     val pagerState = rememberPagerState()
 //    val defaultIndicator = @Composable { tabPositions: List<TabPosition> ->
 //        TabRowDefaults.Indicator(
@@ -79,7 +79,14 @@ fun SocketScreen(list: List<String>) {
                         .fillMaxSize()
                         .padding(top = 50.dp)
                 )
-//            LidSockets48()
+                when (page) {
+                    0 -> LidSockets48()
+                    1 -> FrameSockets48()
+                    2 -> CutterSockets48()
+                    3 -> LidSockets12()
+                    4 -> FrameSockets12()
+                    5 -> CutterSockets12()
+                }
             }
         }
     }

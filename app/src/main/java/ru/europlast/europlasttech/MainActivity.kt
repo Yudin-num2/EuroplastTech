@@ -212,7 +212,7 @@ fun CustomDialog(
                     )
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(Screens.SocketsT02_7_Screen.route) },
                     modifier = Modifier
                         .fillMaxWidth(0.9f),
                     elevation = ButtonDefaults.elevatedButtonElevation(3.dp),

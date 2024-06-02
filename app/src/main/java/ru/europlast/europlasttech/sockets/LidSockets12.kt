@@ -35,12 +35,6 @@ fun LidSockets12() {
         contentAlignment = Alignment.Center
 
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_background_img),
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize()
-        )
         Column(
             verticalArrangement = Arrangement.Top
         ) {

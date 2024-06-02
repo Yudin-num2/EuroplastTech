@@ -35,7 +35,6 @@ fun LidSockets48() {
         contentAlignment = Alignment.Center
 
     ) {
-
         Column(
             verticalArrangement = Arrangement.Top
         ) {

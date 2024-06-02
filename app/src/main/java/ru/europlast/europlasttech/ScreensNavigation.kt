@@ -11,7 +11,7 @@ sealed class Screens(val route: String) {
     data object LoginScreen : Screens("login")
     data object MainScreen : Screens("main_screen")
     data object SocketsT01Screen : Screens("sockets_t01_screen")
-    data object SocketsT02_7_Screen : Screens("sockets_t02_7_screen")
+    data object SocketsT02_7_Screen : Screens("sockets_t02_7_screen/{machine_name}]")
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -26,10 +26,16 @@ fun Navigation() {
             MainScreen(navController)
         }
         composable(Screens.SocketsT01Screen.route) {
-            SocketScreen(list = listOf("Lid", "Frame", "Cutter", "Lid12", "Frame12", "Cutter12"))
+            SocketScreen(machineName = "Telerobot 1",list = listOf("Lid", "Frame", "Cutter", "Lid12", "Frame12", "Cutter12"))
         }
-        composable(Screens.SocketsT02_7_Screen.route) {
-            SocketScreen(list = listOf("Lid", "Frame", "Cutter"))
+        composable(Screens.SocketsT02_7_Screen.route) {navBackStackEntry ->
+            val machineName = navBackStackEntry.arguments?.getString("machine_name")
+            machineName?.let { title->
+                SocketScreen(
+                    machineName = title,
+                    list = listOf("Lid", "Frame", "Cutter")
+                )
+            }
         }
     }
 }
