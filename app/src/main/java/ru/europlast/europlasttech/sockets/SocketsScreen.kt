@@ -1,6 +1,7 @@
 package ru.europlast.europlasttech.sockets
 
-import androidx.compose.animation.animateColor
+import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
@@ -11,19 +12,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.google.accompanist.pager.*
@@ -32,20 +28,25 @@ import ru.europlast.europlasttech.R
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun SocketScreen(machineName: String, list: List<String>) {
+fun SocketScreen(
+    machineName: String,
+    list: List<String>,
+) {
     val pagerState = rememberPagerState()
 //    val defaultIndicator = @Composable { tabPositions: List<TabPosition> ->
 //        TabRowDefaults.Indicator(
 //            Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
 //        )
 //    }
+//    val coroutineScope = rememberCoroutineScope()
+
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomIndicator(tabPositions, pagerState)
     }
     Box(modifier = Modifier
         .fillMaxSize()
         .padding(top = 30.dp)) {
-//    val coroutineScope = rememberCoroutineScope()
+
         ScrollableTabRow(
             modifier = Modifier
                 .height(50.dp),
@@ -57,7 +58,8 @@ fun SocketScreen(machineName: String, list: List<String>) {
                     modifier = Modifier.zIndex(6f),
                     text = { Text(text = title) },
                     selected = pagerState.currentPage == index,
-                    onClick = { //coroutineScope.launch {
+                    onClick = {
+                              //coroutineScope.launch {
                         //pagerState.animateScrollToPage(index)}
                     },
                 )

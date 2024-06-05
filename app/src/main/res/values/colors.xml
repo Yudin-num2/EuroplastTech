@@ -7,4 +7,24 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!--    Socket reasons     -->
+
+    <color name="good_socket">#39E500</color>
+    <color name="underfilling">#1C71D8</color>
+    <color name="dirt">#AC7E64</color>
+    <color name="needle_chipping">#7641D1</color>
+    <color name="flash_by_closure">#A0A71B</color>
+    <color name="crack">#FF29EC</color>
+    <color name="hole">#E01B24</color>
+    <color name="gate_valve">#C0FF41</color>
+    <color name="not_warm">#1753B9</color>
+    <color name="geometry">#D2691E</color>
+    <color name="water">#00DAC7</color>
+
+    <!--    -->
+
+    <color name="save_and_exit_normal">#FAFF63</color>
+    <color name="save_and_exit_pressed">#DCCD42</color>
+
 </resources>
