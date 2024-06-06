@@ -14,6 +14,7 @@ val EvpCyan = Color(0xFF00A1D3)
 val Black = Color(0xFF000000)
 val SocketTabIndicatorBG = Color(0xFFFF7455)
 val SocketTabIndicatorBorder = Color(0xFFC13D25)
+val SaveAndExitBtn = Color(0xFFFFEB3B)
 
 // SwitchColors //
 val ThumbChecked = Color(0xFF11FF00)

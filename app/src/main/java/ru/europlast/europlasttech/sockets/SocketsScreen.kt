@@ -1,5 +1,6 @@
 package ru.europlast.europlasttech.sockets
 
+import android.util.Log
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
@@ -11,12 +12,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import ru.europlast.europlasttech.ui.theme.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,7 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.*
+import kotlinx.coroutines.launch
 import ru.europlast.europlasttech.R
 
 @OptIn(ExperimentalPagerApi::class)
@@ -33,17 +42,59 @@ fun SocketScreen(
     machineName: String,
     list: List<String>,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomIndicator(tabPositions, pagerState)
     }
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(top = 30.dp)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 30.dp)
+    ) {
+
+        Image(
+            painter = painterResource(id = R.drawable.ic_background_img),
+            contentDescription = "background_img",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxSize()
+                .zIndex(-1f)
+        )
+        Text(
+            text = machineName,
+            style = TextStyle(
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                color = Black,
+                fontWeight = FontWeight.Bold,
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 55.dp)
+        )
+        Button(
+            onClick = {
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+                .align(Alignment.BottomEnd)
+                .zIndex(3f),
+            colors = ButtonDefaults.buttonColors(SaveAndExitBtn),
+        ) {
+            Text(
+                text = stringResource(R.string.save_and_exit), style = TextStyle(
+                    textAlign = TextAlign.Center, fontSize = 24.sp, color = Black,
+                    fontWeight = FontWeight.Bold,
+                )
+            )
+        }
 
         ScrollableTabRow(
             modifier = Modifier
-                .height(55.dp),
+                .height(55.dp)
+                .zIndex(3f),
             selectedTabIndex = pagerState.currentPage,
             indicator = indicator,
             containerColor = EvpCyan,
@@ -54,26 +105,23 @@ fun SocketScreen(
                         .zIndex(6f),
                     text = { Text(text = title) },
                     selected = pagerState.currentPage == index,
-                    onClick = { },
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
                 )
             }
         }
         HorizontalPager(
             modifier = Modifier
-                .fillMaxWidth(),
+                .zIndex(1f),
             count = list.size,
             state = pagerState,
         ) { page ->
-            Box(Modifier
-                .fillMaxSize(),) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_background_img),
-                    contentDescription = "background_img",
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 50.dp)
-                )
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
                 when (page) {
                     0 -> LidSockets48()
                     1 -> FrameSockets48()
@@ -82,22 +130,12 @@ fun SocketScreen(
                     4 -> FrameSockets12()
                     5 -> CutterSockets12()
                 }
-                Text(
-                    text = machineName,
-                    style = TextStyle(
-                        textAlign = TextAlign.Center,
-                        fontSize = 20.sp,
-                        color = Black,
-                        fontWeight = FontWeight.Bold,
-                    ),
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 55.dp)
-                )
+
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -144,4 +182,16 @@ private fun CustomIndicator(tabPositions: List<TabPosition>, pagerState: PagerSt
 @Preview
 fun previewSocketsScreen() {
     SocketScreen(machineName = "Telerobot 2", list = listOf("Lid", "Frame", "Cutter"))
+}
+
+@Composable
+fun saveBtnParser(){
+    val vM: SocketViewModel = viewModel()
+    val buttonCol by vM.buttonColors.collectAsState()
+
+    buttonCol.forEach { (page, colorsMap) ->
+        colorsMap.forEach { (buttonIndex, color) ->
+            Log.d("TestDebug", "Page: $page, Button: $buttonIndex, Color: $color")
+        }
+    }
 }

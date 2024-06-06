@@ -39,7 +39,6 @@ fun LidSockets48() {
 
     Box(
         Modifier
-            .fillMaxSize()
             .padding(start = 16.dp, end = 16.dp, bottom = 30.dp)
             .background(color = Color.Transparent),
         contentAlignment = Alignment.Center
