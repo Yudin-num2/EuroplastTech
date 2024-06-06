@@ -1,5 +1,6 @@
 package ru.europlast.europlasttech.sockets
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,7 +40,8 @@ fun LidSockets48() {
     Box(
         Modifier
             .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp, bottom = 30.dp),
+            .padding(start = 16.dp, end = 16.dp, bottom = 30.dp)
+            .background(color = Color.Transparent),
         contentAlignment = Alignment.Center
     ) {
         Column(

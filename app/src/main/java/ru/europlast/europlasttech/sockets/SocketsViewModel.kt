@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class SocketViewModel : ViewModel() {
-    // Хранение цветов для каждой кнопки на каждой странице
     private val _buttonColors = MutableStateFlow<Map<Int, Map<Int, Color>>>(emptyMap())
     val buttonColors: StateFlow<Map<Int, Map<Int, Color>>> = _buttonColors
 

@@ -212,7 +212,9 @@ fun CustomDialog(
                     )
                 }
                 Button(
-                    onClick = { navController.navigate(Screens.SocketsT02_7_Screen.route) },
+                    onClick = { navController.navigate(
+                        Screens.SocketsT02_7_Screen.route.replace(
+                            "{machine_name}", "Telerobot 2")) },
                     modifier = Modifier
                         .fillMaxWidth(0.9f),
                     elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
@@ -227,7 +229,9 @@ fun CustomDialog(
                         ))
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(
+                        Screens.SocketsT02_7_Screen.route.replace(
+                            "{machine_name}", "Telerobot 3")) },
                     modifier = Modifier
                         .fillMaxWidth(0.9f),
                     elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
@@ -242,7 +246,9 @@ fun CustomDialog(
                         ))
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(
+                        Screens.SocketsT02_7_Screen.route.replace(
+                            "{machine_name}", "Telerobot 4")) },
                     modifier = Modifier
                         .fillMaxWidth(0.9f),
                     elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
@@ -257,7 +263,9 @@ fun CustomDialog(
                         ))
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(
+                        Screens.SocketsT02_7_Screen.route.replace(
+                            "{machine_name}", "Telerobot 5")) },
                     modifier = Modifier
                         .fillMaxWidth(0.9f),
                     elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
@@ -272,7 +280,9 @@ fun CustomDialog(
                         ))
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(
+                        Screens.SocketsT02_7_Screen.route.replace(
+                            "{machine_name}", "Telerobot 6")) },
                     modifier = Modifier
                         .fillMaxWidth(0.9f),
                     elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
@@ -287,7 +297,9 @@ fun CustomDialog(
                         ))
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(
+                        Screens.SocketsT02_7_Screen.route.replace(
+                            "{machine_name}", "Telerobot 7")) },
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
                         .padding(bottom = 20.dp),

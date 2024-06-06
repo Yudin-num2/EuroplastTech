@@ -11,6 +11,10 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 val WhiteTransparent = Color(0xB3FFFFFF)
 val EvpCyan = Color(0xFF00A1D3)
+val Black = Color(0xFF000000)
+val SocketTabIndicatorBG = Color(0xFFFF7455)
+val SocketTabIndicatorBorder = Color(0xFFC13D25)
+
 // SwitchColors //
 val ThumbChecked = Color(0xFF11FF00)
 val TrackChecked = Color(0xFFA5FF93)
