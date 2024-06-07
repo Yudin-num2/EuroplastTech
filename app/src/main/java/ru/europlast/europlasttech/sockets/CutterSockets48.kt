@@ -30,7 +30,7 @@ fun CutterSockets48() {
     val buttonColors by viewModel.buttonColors.collectAsState()
     val socketColors = remember {
         mutableStateListOf<Color>().apply {
-            repeat(48) { add(buttonColors[2]?.get(it) ?: goodSocket) }
+            repeat(48) { add(buttonColors["Cutter"]?.get(it) ?: goodSocket) }
         }
     }
     var showDialog by remember { mutableStateOf(false) }
@@ -73,7 +73,7 @@ fun CutterSockets48() {
         ReasonsPopupForSockets(onDismiss = { showDialog = false }) { chosenColor ->
             socketColors[selectedSocketIndex] = chosenColor
             showDialog = false
-            viewModel.updateButtonColor(2, selectedSocketIndex, chosenColor)
+            viewModel.updateButtonColor("Cutter", selectedSocketIndex, chosenColor)
         }
     }
 }

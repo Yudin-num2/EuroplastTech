@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class SocketViewModel : ViewModel() {
-    private val _buttonColors = MutableStateFlow<Map<Int, Map<Int, Color>>>(emptyMap())
-    val buttonColors: StateFlow<Map<Int, Map<Int, Color>>> = _buttonColors
+    private val _buttonColors = MutableStateFlow<Map<String, Map<Int, Color>>>(emptyMap())
+    val buttonColors: StateFlow<Map<String, Map<Int, Color>>> = _buttonColors
 
-    fun updateButtonColor(page: Int, buttonIndex: Int, color: Color) {
+    fun updateButtonColor(page: String, buttonIndex: Int, color: Color) {
         viewModelScope.launch {
             val pageColors = _buttonColors.value[page]?.toMutableMap() ?: mutableMapOf()
             pageColors[buttonIndex] = color

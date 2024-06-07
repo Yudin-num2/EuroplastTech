@@ -30,7 +30,7 @@ fun FrameSockets12() {
     val buttonColors by viewModel.buttonColors.collectAsState()
     val socketColors = remember {
         mutableStateListOf<Color>().apply {
-            repeat(12) { add(buttonColors[4]?.get(it) ?: goodSocket) }
+            repeat(12) { add(buttonColors["Frame12"]?.get(it) ?: goodSocket) }
         }
     }
     var showDialog by remember { mutableStateOf(false) }
@@ -73,7 +73,7 @@ fun FrameSockets12() {
         ReasonsPopupForSockets(onDismiss = { showDialog = false }) { chosenColor ->
             socketColors[selectedSocketIndex] = chosenColor
             showDialog = false
-            viewModel.updateButtonColor(4, selectedSocketIndex, chosenColor)
+            viewModel.updateButtonColor("Frame12", selectedSocketIndex, chosenColor)
         }
     }
 }

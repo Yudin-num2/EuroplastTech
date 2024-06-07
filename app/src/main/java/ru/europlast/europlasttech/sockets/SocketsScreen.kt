@@ -14,12 +14,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import ru.europlast.europlasttech.ui.theme.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -34,7 +32,11 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import ru.europlast.europlasttech.R
+import ru.europlast.europlasttech.data.ButtonColorData
+import ru.europlast.europlasttech.data.ButtonColorsList
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -43,10 +45,25 @@ fun SocketScreen(
     list: List<String>,
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val viewModel: SocketViewModel = viewModel()
+    val buttonColors by viewModel.buttonColors.collectAsState()
     val pagerState = rememberPagerState()
     val indicator = @Composable { tabPositions: List<TabPosition> ->
         CustomIndicator(tabPositions, pagerState)
     }
+    val parseColors = mapOf(
+    "goodSocket" to Color(0xFF37FF00),
+    "Underfilling" to Color(0xFF1C71D8),
+    "Dirt" to Color(0xFFAC7E64),
+    "NeedleChipping" to Color(0xFF7641D1),
+    "FlashByClosure" to Color(0xFFA0A71B),
+    "Crack" to Color(0xFFFF29EC),
+    "Hole" to Color(0xFFE01B24),
+    "GateValve" to Color(0xFFC0FF41),
+    "NotWarm" to Color(0xFF003287),
+    "Geometry" to Color(0xFFD2691E),
+    "Water" to Color(0xFF00DAC7)
+    )
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -54,7 +71,7 @@ fun SocketScreen(
     ) {
 
         Image(
-            painter = painterResource(id = R.drawable.ic_background_img),
+            painter = painterResource(R.drawable.ic_background_img),
             contentDescription = "background_img",
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
@@ -75,7 +92,15 @@ fun SocketScreen(
         )
         Button(
             onClick = {
-            },
+                val replacedButtonColors = buttonColors.mapValues { (_, innerMap) ->
+                    innerMap.mapKeys { (key, _) ->
+                        key + 1
+                    }.mapValues { (_, color) ->
+                        parseColors.entries.find { it.value == color }?.key ?: color.toString()
+                    }
+                }
+                Log.d("RESULT_COLORS", replacedButtonColors.toString())
+                      },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
@@ -180,18 +205,16 @@ private fun CustomIndicator(tabPositions: List<TabPosition>, pagerState: PagerSt
 
 @Composable
 @Preview
-fun previewSocketsScreen() {
+fun PreviewSocketsScreen() {
     SocketScreen(machineName = "Telerobot 2", list = listOf("Lid", "Frame", "Cutter"))
 }
 
-@Composable
-fun saveBtnParser(){
-    val vM: SocketViewModel = viewModel()
-    val buttonCol by vM.buttonColors.collectAsState()
 
-    buttonCol.forEach { (page, colorsMap) ->
-        colorsMap.forEach { (buttonIndex, color) ->
-            Log.d("TestDebug", "Page: $page, Button: $buttonIndex, Color: $color")
-        }
-    }
-}
+//fun saveBtnParser(buttonCol: Map<String, Map<Int, Color>>): String {
+//    val buttonColorDataList = mutableListOf<ButtonColorData>()
+//
+//    buttonCol.forEach { (page, colorsMap) ->
+//        colorsMap.forEach { (buttonIndex, color) ->
+//        }
+//    }
+//}

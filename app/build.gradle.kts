@@ -50,6 +50,7 @@ android {
 }
 
 dependencies {
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
     implementation (libs.accompanist.pager.v0130)
     implementation (libs.accompanist.pager.indicators)
     implementation (libs.accompanist.pager)

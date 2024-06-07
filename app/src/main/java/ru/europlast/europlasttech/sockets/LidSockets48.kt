@@ -31,7 +31,7 @@ fun LidSockets48() {
     val buttonColors by viewModel.buttonColors.collectAsState()
     val socketColors = remember {
         mutableStateListOf<Color>().apply {
-            repeat(48) { add(buttonColors[0]?.get(it) ?: goodSocket) }
+            repeat(48) { add(buttonColors["Lid"]?.get(it) ?: goodSocket) }
         }
     }
     var showDialog by remember { mutableStateOf(false) }
@@ -69,12 +69,12 @@ fun LidSockets48() {
             }
         }
     }
-
+//TODO измени тип приходных данных (цвет)
     if (showDialog) {
         ReasonsPopupForSockets(onDismiss = { showDialog = false }) { chosenColor ->
             socketColors[selectedSocketIndex] = chosenColor
             showDialog = false
-            viewModel.updateButtonColor(0, selectedSocketIndex, chosenColor)
+            viewModel.updateButtonColor("Lid", selectedSocketIndex, chosenColor)
         }
     }
 }
