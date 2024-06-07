@@ -32,11 +32,8 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import ru.europlast.europlasttech.R
-import ru.europlast.europlasttech.data.ButtonColorData
-import ru.europlast.europlasttech.data.ButtonColorsList
+
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable

@@ -12,16 +12,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardElevation
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,18 +40,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ru.europlast.europlasttech.ui.theme.WhiteTransparent
 
 
@@ -60,9 +69,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
+@Preview
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(navController: NavController = rememberNavController()
+) {
 
     var isDialogVisible by remember { mutableStateOf(false) }
 
@@ -186,13 +196,42 @@ fun CustomDialog(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = stringResource(id = R.string.choose_machine),
+                Row(
                     modifier = Modifier
-                        .padding(5.dp)
-                        .fillMaxWidth(),
-                    fontSize = 25.sp,
-                    textAlign = TextAlign.Center,
-                )
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Spacer to push the text to the center
+                    Spacer(modifier = Modifier.weight(2f))
+
+                    Text(
+                        text = stringResource(R.string.choose_machine),
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(
+                            fontSize = 22.sp,
+                            fontFamily = FontFamily.Default,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                    )
+
+                    // Spacer to push the icon to the right edge
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "close Dialog",
+                        tint = colorResource(android.R.color.darker_gray),
+                        modifier = Modifier
+                            .padding(end = 20.dp)
+                            .width(30.dp)
+                            .height(30.dp)
+                            .clickable { onDismiss() }
+
+                    )
+                }
+
                 Button(
                     onClick = {
                         navController.navigate(Screens.SocketsT01Screen.route) },
