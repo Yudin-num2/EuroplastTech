@@ -5,6 +5,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
+import ru.europlast.europlasttech.data.CurrentTask
+import ru.europlast.europlasttech.data.CurrentTasksList
 import ru.europlast.europlasttech.sockets.SocketScreen
 
 sealed class Screens(val route: String) {
@@ -12,6 +14,7 @@ sealed class Screens(val route: String) {
     data object MainScreen : Screens("main_screen")
     data object SocketsT01Screen : Screens("sockets_t01_screen")
     data object SocketsT02_7_Screen : Screens("sockets_t02_7_screen/{machine_name}")
+    data object CurrentTasksScreen : Screens("current_tasks_screen")
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -36,6 +39,171 @@ fun Navigation() {
                     list = listOf("Lid", "Frame", "Cutter")
                 )
             }
+        }
+        composable(Screens.CurrentTasksScreen.route) {
+            CurrentTasksScreen(navController, tasksList = CurrentTasksList(listOf(
+                CurrentTask(
+                    task = "Заменить техническую оснастку на Телероботе №1",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №2",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+                CurrentTask(
+                    task = "Задача №3",
+                    workers = listOf("Worker1", "Worker2"),
+                    status = "В работе",
+                    techCard = "",
+                    pathToPhoto = "",
+                    createTime = "01-01-01 15:16:17.99999",
+                    author = "Сысоев Илья",
+                    spentRepairParts = listOf("Part1", "Part2")
+                ),
+            ))
+            )
         }
     }
 }

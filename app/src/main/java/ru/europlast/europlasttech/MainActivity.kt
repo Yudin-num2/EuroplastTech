@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import ru.europlast.europlasttech.ui.theme.WhiteTransparent
@@ -86,7 +87,7 @@ fun MainScreen(navController: NavController = rememberNavController()
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row {
                 Button(
-                    onClick = { },
+                    onClick = { navController.navigate(Screens.CurrentTasksScreen.route) },
                     modifier = Modifier
                         .padding(horizontal = 40.dp, vertical = 8.dp)
                         .fillMaxWidth(),
@@ -212,8 +213,9 @@ fun CustomDialog(
                             fontSize = 22.sp,
                             fontFamily = FontFamily.Default,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
+                        modifier = Modifier.zIndex(1f)
                     )
 
                     // Spacer to push the icon to the right edge
@@ -246,7 +248,7 @@ fun CustomDialog(
                         style = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 26.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     )
                 }
@@ -264,7 +266,7 @@ fun CustomDialog(
                         style = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 26.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onSurface
                         ))
                 }
                 Button(
@@ -281,7 +283,7 @@ fun CustomDialog(
                         style = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 26.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onSurface
                         ))
                 }
                 Button(
@@ -298,7 +300,7 @@ fun CustomDialog(
                         style = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 26.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onSurface
                         ))
                 }
                 Button(
@@ -315,7 +317,7 @@ fun CustomDialog(
                         style = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 26.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onSurface
                         ))
                 }
                 Button(
@@ -332,7 +334,7 @@ fun CustomDialog(
                         style = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 26.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onSurface
                         ))
                 }
                 Button(
@@ -350,7 +352,7 @@ fun CustomDialog(
                         style = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 26.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onSurface
 
                         ))
                 }
