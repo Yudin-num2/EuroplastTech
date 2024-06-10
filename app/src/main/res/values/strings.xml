@@ -38,5 +38,21 @@
     <string name="select_reason">Select reason</string>
     <string name="checking_data">Checking the entered data</string>
     <string name="socket">Socket</string>
+    <string name="workers">Performers</string>
+    <string name="status">Status</string>
 
+    <!--    Tasks    -->
+    <string name="in_progress_status">In progress</string>
+    <string name="completed_status">Completed</string>
+    <string name="canceled_status">Canceled</string>
+    <string name="created_status">Created</string>
+
+    <string name="in_progress_date">Date and time of the start of work</string>
+    <string name="completed_date">Date and time of completion of the work</string>
+    <string name="canceled_date">Date and time of cancellation</string>
+    <string name="created_date">Date and time of creation</string>
+
+    <string name="author">Author</string>
+    <!--                 -->
+    <string name="unknown">Unknown</string>
 </resources>

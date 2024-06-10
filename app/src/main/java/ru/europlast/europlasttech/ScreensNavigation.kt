@@ -65,7 +65,7 @@ fun Navigation() {
                 CurrentTask(
                     task = "Задача №3",
                     workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
+                    status = "Завершено",
                     techCard = "",
                     pathToPhoto = "",
                     createTime = "01-01-01 15:16:17.99999",
@@ -75,7 +75,7 @@ fun Navigation() {
                 CurrentTask(
                     task = "Задача №3",
                     workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
+                    status = "Отменено",
                     techCard = "",
                     pathToPhoto = "",
                     createTime = "01-01-01 15:16:17.99999",
@@ -85,7 +85,7 @@ fun Navigation() {
                 CurrentTask(
                     task = "Задача №3",
                     workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
+                    status = "Создана",
                     techCard = "",
                     pathToPhoto = "",
                     createTime = "01-01-01 15:16:17.99999",

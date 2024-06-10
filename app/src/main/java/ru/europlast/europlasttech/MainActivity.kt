@@ -129,7 +129,7 @@ fun MainScreen(navController: NavController = rememberNavController()
 
             Row {
                 Button(
-                    onClick = { /* Действие при нажатии кнопки */ },
+                    onClick = { TODO() },
                     modifier = Modifier
                         .padding(horizontal = 40.dp, vertical = 8.dp)
                         .fillMaxWidth(),
@@ -147,7 +147,7 @@ fun MainScreen(navController: NavController = rememberNavController()
             }
             Row {
                 Button(
-                    onClick = { /* Действие при нажатии кнопки */ },
+                    onClick = { TODO() },
                     modifier = Modifier
                         .padding(horizontal = 40.dp, vertical = 8.dp)
                         .fillMaxWidth(),
