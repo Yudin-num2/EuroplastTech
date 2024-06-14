@@ -15,6 +15,7 @@ val Black = Color(0xFF000000)
 val SocketTabIndicatorBG = Color(0xFFFF7455)
 val SocketTabIndicatorBorder = Color(0xFFC13D25)
 val SaveAndExitBtn = Color(0xFFFFEB3B)
+val SaveAndExitBtnBorder = Color(0xFFBEB32C)
 
 // SwitchColors //
 val ThumbChecked = Color(0xFF11FF00)
@@ -39,36 +40,3 @@ val Water = Color(0xFF00DAC7)
 //* [END] *//
 
 
-
-
-
-//<color name=  "underfilling">#1C71D8</color>
-//<color name="underfilling_pressed">#1758A7</color>
-//
-//<color name="dirt">#AC7E64</color>
-//<color name="dirt_pressed">#785745</color>
-//
-//<color name="needle_chipping">#7641D1</color>
-//<color name="needle_chipping_pressed">#512D8E</color>
-//
-//<color name="flash_by_closure">#A0A71B</color>
-//<color name="flash_by_closure_pressed">#6C7112</color>
-//
-//<color name="crack">#FF29EC</color>
-//<color name="crack_pressed">#A71B9B</color>
-//
-//<color name="hole">#E01B24</color>
-//<color name="hole_pressed">#A4141A</color>
-//
-//<color name="gate_valve">#C0FF41</color>
-//<color name="gate_valve_pressed">#86B22E</color>
-//
-//<color name="not_warm">#003287</color>
-//<color name="not_warm_pressed">#011E51</color>
-//
-//<color name="geometry">#D2691E</color>
-//<color name="geometry_pressed">#974C16</color>
-//
-//<color name="water">#00DAC7</color>
-//<color name="water_pressed">#01786D</color>
-//

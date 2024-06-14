@@ -24,6 +24,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -32,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,10 +43,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -62,6 +68,10 @@ import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import ru.europlast.europlasttech.data.CurrentTask
 import ru.europlast.europlasttech.data.CurrentTasksList
+import ru.europlast.europlasttech.ui.theme.Black
+import ru.europlast.europlasttech.ui.theme.EvpCyan
+import ru.europlast.europlasttech.ui.theme.SaveAndExitBtn
+import ru.europlast.europlasttech.ui.theme.SaveAndExitBtnBorder
 
 class CurrentTasksActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +79,6 @@ class CurrentTasksActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Navigation()
-
         }
     }
 }
@@ -77,14 +86,55 @@ class CurrentTasksActivity : ComponentActivity() {
 @Composable
 fun CurrentTasksScreen(navController: NavController, tasksList: CurrentTasksList) {
     Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Color.White),
+        .fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_background_img),
+            contentDescription = "background image",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxSize()
+                .zIndex(-1f)
+        )
+        Row(modifier = Modifier
+            .fillMaxWidth()
+//            .height(40.dp)
+            .padding(15.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ){
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowLeft,
+                contentDescription = "return Icon",
+                tint = Color.Black,
+                modifier = Modifier
+                    .padding(top = 15.dp, end = 15.dp,)
+                    .width(30.dp)
+                    .height(30.dp)
+                    .clickable { navController.navigate(Screens.MainScreen.route){
+                        popUpTo("current_tasks_screen") { inclusive = true }}
+                    }
+                    .zIndex(1f),
+
+            )
+            Icon(
+                imageVector = Icons.Filled.Refresh,
+                contentDescription = "close Dialog Icon",
+                tint = Color.Green,
+                modifier = Modifier
+                    .padding(top = 15.dp, end = 15.dp,)
+                    .width(30.dp)
+                    .height(30.dp)
+                    .clickable { /* TODO */ }
+                    .zIndex(1f),
+
+            )
+        }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 30.dp, bottom = 5.dp, end = 20.dp, start = 20.dp,)
+                .padding(top = 70.dp, bottom = 15.dp, end = 20.dp, start = 20.dp,)
                 .zIndex(1f),
         ) {
             itemsIndexed(tasksList.currentTasks.toList()) { _, item ->
@@ -96,12 +146,9 @@ fun CurrentTasksScreen(navController: NavController, tasksList: CurrentTasksList
 
 @Composable
 //@Preview
-fun CurrentTaskCard(
-    task: CurrentTask
-     ) {
-//    val task = CurrentTask()//*********************
+fun CurrentTaskCard(task: CurrentTask) {
     val textColor by remember { mutableStateOf(Color.Black) }
-    var openFullCardInfo by remember{ mutableStateOf(false)}
+    var isDialogVisible by remember { mutableStateOf(false) }
     val statusColor = when (task.status) {
         stringResource(R.string.in_progress_status) -> Color.Yellow
         stringResource(R.string.completed_status) -> Color.Green
@@ -112,7 +159,7 @@ fun CurrentTaskCard(
     Card(modifier = Modifier
         .fillMaxWidth()
         .padding(bottom = 10.dp)
-        .clickable(onClick = { openFullCardInfo = !openFullCardInfo }),
+        .clickable(onClick = { isDialogVisible = !isDialogVisible }),
         elevation = CardDefaults.cardElevation(5.dp),) {
         Row(modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -122,7 +169,7 @@ fun CurrentTaskCard(
                 .height(30.dp)
                 .width(30.dp)
                 .clip(shape = RoundedCornerShape(30.dp))
-                .background(color = statusColor)){}
+                .background(color = statusColor))
             Text(modifier = Modifier.padding(horizontal = 10.dp),
                 text = task.task,
                 maxLines = 2,
@@ -136,29 +183,16 @@ fun CurrentTaskCard(
             )
         }
     }
-    if (openFullCardInfo) {
-        FullCardInfo()
+    if (isDialogVisible) {
+        FullCardInfo(task, onDismiss = { isDialogVisible = false })
     }
 }
 
 @Composable
-@Preview
-fun FullCardInfo(
-    //onDismiss() -> Unit
-){
-    val choisenCard = CurrentTask(
-        task = "ЗадачаЗадачаЗадачаЗадачаЗадача",
-        workers = listOf("Worker1", "Worker2"),
-        status = "Создана",
-        techCard = "",
-        pathToPhoto = "/home/nonanon/coding/Kotlin/EuroplastTech/Images/notFoundPhoto.jpeg",
-        createTime = "01-01-01 15:16:17.99999",
-        author = "Сысоев Илья",
-        spentRepairParts = listOf("Part1", "Part2")
-    )
-    var isDialogVisible by remember { mutableStateOf(true) }
+fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit){
+    var changeStatusCode by remember{ mutableStateOf(false) }
 
-    Dialog(onDismissRequest = { isDialogVisible = false },
+    Dialog(onDismissRequest = {  },
         properties = DialogProperties(dismissOnClickOutside = true)
     ) {
         Surface(
@@ -170,18 +204,28 @@ fun FullCardInfo(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = "close Dialog",
+                    contentDescription = "close Dialog Icon",
                     tint = colorResource(android.R.color.darker_gray),
                     modifier = Modifier
                         .padding(top = 15.dp, end = 15.dp,)
                         .width(30.dp)
                         .height(30.dp)
-                        .clickable {
-                            isDialogVisible = false
-                            Log.d("Dialog", "Нажата иконка")
-                        }
+                        .clickable { onDismiss() }
                         .zIndex(1f)
                         .align(Alignment.TopEnd),
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_save_24),
+                    contentDescription = "Save Icon",
+                    tint = colorResource(android.R.color.darker_gray),
+                    modifier = Modifier
+                        .padding(top = 15.dp, start = 15.dp,)
+                        .width(30.dp)
+                        .height(30.dp)
+                        .clickable { /*TODO request on server*/
+                        onDismiss()}
+                        .zIndex(1f)
+                        .align(Alignment.TopStart),
                 )
                 Column(modifier = Modifier.padding(20.dp)) {
 
@@ -191,7 +235,7 @@ fun FullCardInfo(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            modifier = Modifier.padding(end = 30.dp),
+                            modifier = Modifier.padding(top = 30.dp),
                             text = choisenCard.task,
                             textAlign = TextAlign.Start,
                             style = TextStyle(
@@ -215,14 +259,14 @@ fun FullCardInfo(
                     )
                     Box(modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp))
-                        .border(3.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp))
+                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
                         .padding(3.dp),
                         contentAlignment = Alignment.Center){
 
-                        Text(text = stringResource(id = R.string.workers),
+                        Text(text = stringResource(id = ru.europlast.europlasttech.R.string.workers),
                             style = TextStyle(
-                                fontSize = 25.sp,
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Black,)
                         )
@@ -233,82 +277,201 @@ fun FullCardInfo(
                                 fontSize = 15.sp,
                                 fontStyle = FontStyle.Italic,
                                 color = Color.Black),
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
                     }
                     Box(modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp))
-                        .border(3.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp))
+                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
                         .padding(3.dp),
                         contentAlignment = Alignment.Center){
 
-                        Text(text = stringResource(id = R.string.status),
+                        Text(text = stringResource(id = ru.europlast.europlasttech.R.string.status),
                             style = TextStyle(
-                                fontSize = 25.sp,
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Black,)
                         )
                     }
-                        Text(text = choisenCard.status,
-                            style = TextStyle(
-                                fontSize = 15.sp,
-                                fontStyle = FontStyle.Italic,
-                                color = Color.Black),
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
+                    Text(text = choisenCard.status,
+                        style = TextStyle(
+                            fontSize = 15.sp,
+                            fontStyle = FontStyle.Italic,
+                            color = Color.Black),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
                     Box(modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp))
-                        .border(3.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp))
+                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
                         .padding(3.dp),
                         contentAlignment = Alignment.Center){
 
                         Text(text = when(choisenCard.status) {
-                            stringResource(R.string.in_progress_status) ->
-                                stringResource(R.string.in_progress_date)
-                            stringResource(R.string.completed_status) ->
-                                stringResource(R.string.completed_date)
-                            stringResource(R.string.canceled_status) ->
-                                stringResource(R.string.canceled_date)
-                            stringResource(R.string.created_status) ->
-                                stringResource(R.string.created_date)
-                            else -> {stringResource(R.string.unknown)}}, ///?????
+                            stringResource(ru.europlast.europlasttech.R.string.in_progress_status) ->
+                                stringResource(ru.europlast.europlasttech.R.string.in_progress_date)
+                            stringResource(ru.europlast.europlasttech.R.string.completed_status) ->
+                                stringResource(ru.europlast.europlasttech.R.string.completed_date)
+                            stringResource(ru.europlast.europlasttech.R.string.canceled_status) ->
+                                stringResource(ru.europlast.europlasttech.R.string.canceled_date)
+                            stringResource(ru.europlast.europlasttech.R.string.created_status) ->
+                                stringResource(ru.europlast.europlasttech.R.string.created_date)
+                            else -> stringResource(ru.europlast.europlasttech.R.string.unknown)
+                        },
                             style = TextStyle(
-                                fontSize = 25.sp,
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black,)
+                                color = Color.Black,),
+                            modifier = Modifier.padding(horizontal = 15.dp),
+                            textAlign = TextAlign.Center
                         )
                     }
-                        Text(text = choisenCard.createTime,
-                            style = TextStyle(
-                                fontSize = 15.sp,
-                                fontStyle = FontStyle.Italic,
-                                color = Color.Black),
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
+                    Text(text = choisenCard.createTime,
+                        style = TextStyle(
+                            fontSize = 15.sp,
+                            fontStyle = FontStyle.Italic,
+                            color = Color.Black),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
                     Box(modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp))
-                        .border(3.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp))
+                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
                         .padding(3.dp),
                         contentAlignment = Alignment.Center){
 
-                        Text(text = stringResource(id = R.string.author),
+                        Text(text = stringResource(id = ru.europlast.europlasttech.R.string.author),
                             style = TextStyle(
-                                fontSize = 25.sp,
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Black,)
                         )
                     }
-                        Text(text = choisenCard.author,
-                            style = TextStyle(
-                                fontSize = 15.sp,
-                                fontStyle = FontStyle.Italic,
-                                color = Color.Black),
-                                modifier = Modifier.padding(vertical = 8.dp)
+                    Text(text = choisenCard.author,
+                        style = TextStyle(
+                            fontSize = 15.sp,
+                            fontStyle = FontStyle.Italic,
+                            color = Color.Black),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    if (choisenCard.status != stringResource(ru.europlast.europlasttech.R.string.completed_status) &&
+                        choisenCard.status != stringResource(ru.europlast.europlasttech.R.string.canceled_status)
+                    )  {
+                        Button(onClick = { changeStatusCode = true },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp)
+                                .zIndex(1f)
+                                .border(
+                                    2.dp, color = SaveAndExitBtnBorder,
+                                    shape = RoundedCornerShape(20.dp)
+                                ),
+                            colors = ButtonDefaults.buttonColors(SaveAndExitBtn)
+                        ){
+                            Text(text = when(choisenCard.status) {
+                                stringResource(ru.europlast.europlasttech.R.string.in_progress_status) ->
+                                    stringResource(ru.europlast.europlasttech.R.string.change_status)
+                                stringResource(ru.europlast.europlasttech.R.string.created_status) ->
+                                    stringResource(ru.europlast.europlasttech.R.string.get_to_work)
+                                else -> {
+                                    stringResource(ru.europlast.europlasttech.R.string.unknown)
+                                }},
+                                style = TextStyle(
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black,
+                                    textAlign = TextAlign.Center)
                             )
-                    //TODO Button change status
+
+                        }
+                        if (changeStatusCode){
+                            ChangeStatus(onDismiss = {changeStatusCode = false})
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ChangeStatus(onDismiss: () -> Unit) {
+    Dialog(
+        onDismissRequest = { onDismiss() },
+        properties = DialogProperties(dismissOnClickOutside = true)
+    ) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = Color.White
+        ) {
+            Box(
+                contentAlignment = Alignment.TopCenter
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "close Dialog",
+                    tint = colorResource(android.R.color.darker_gray),
+                    modifier = Modifier
+                        .padding(top = 15.dp, end = 15.dp)
+                        .width(30.dp)
+                        .height(30.dp)
+                        .clickable { onDismiss() }
+                        .zIndex(1f)
+                        .align(Alignment.TopEnd),
+                )
+                Column(modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.SpaceBetween) {
+                    Spacer(modifier = Modifier.padding(20.dp))
+                    Row(){
+                        Button(onClick = { onDismiss()
+                                         /*TODO (обработка смены статуса)*/},
+                            modifier = Modifier
+                                .shadow(5.dp, shape = RoundedCornerShape(30.dp))
+                                .padding(horizontal = 4.dp)
+                                .fillMaxWidth()
+                                .zIndex(1f),
+                            colors = ButtonDefaults.buttonColors(Color.Yellow)
+                        ) {
+                            Text(text = stringResource(id = R.string.in_progress_status),
+                                textAlign = TextAlign.Center,
+                                color = Color.Black)
+
+                        }
+                    }
+                    Row(modifier = Modifier.padding(vertical = 10.dp)){
+                        Button(onClick = { onDismiss()
+                            /*TODO (обработка смены статуса)*/ },
+                            modifier = Modifier
+                                .shadow(5.dp, shape = RoundedCornerShape(30.dp))
+                                .padding(horizontal = 4.dp)
+                                .fillMaxWidth()
+                                .zIndex(1f),
+                            colors = ButtonDefaults.buttonColors(Color.Gray)
+                        ) {
+                            Text(text = stringResource(id = R.string.canceled_status),
+                                textAlign = TextAlign.Center,
+                                color = Color.Black)
+
+                        }
+                    }
+                    Row(){
+                        Button(onClick = { onDismiss()
+                            /*TODO (обработка смены статуса)*/ },
+                            modifier = Modifier
+                                .shadow(5.dp, shape = RoundedCornerShape(30.dp))
+                                .padding(horizontal = 4.dp)
+                                .fillMaxWidth()
+                                .zIndex(1f),
+                            colors = ButtonDefaults.buttonColors(Color.Green)
+                        ) {
+                            Text(text = stringResource(id = R.string.completed_status),
+                                textAlign = TextAlign.Center,
+                                color = Color.Black)
+
+                        }
+                    }
                 }
             }
         }

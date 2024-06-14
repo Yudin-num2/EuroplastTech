@@ -39,4 +39,8 @@
     <string name="created_date">Дата и время создания</string>
     <string name="unknown">Неизвестно</string>
     <string name="author">Автор</string>
+    <string name="canceled">Отменить</string>
+    <string name="completed">Выполнено</string>
+    <string name="change_status">Сменить статус</string>
+    <string name="get_to_work">Взять в работу</string>
 </resources>

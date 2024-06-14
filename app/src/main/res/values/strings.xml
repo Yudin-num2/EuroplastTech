@@ -52,6 +52,11 @@
     <string name="canceled_date">Date and time of cancellation</string>
     <string name="created_date">Date and time of creation</string>
 
+    <string name="change_status">Change status</string>
+    <string name="canceled">Cancel</string>
+    <string name="completed">Completed</string>
+    <string name="get_to_work">Get to work</string>
+
     <string name="author">Author</string>
     <!--                 -->
     <string name="unknown">Unknown</string>
