@@ -15,6 +15,7 @@ sealed class Screens(val route: String) {
     data object SocketsT01Screen : Screens("sockets_t01_screen")
     data object SocketsT02_7_Screen : Screens("sockets_t02_7_screen/{machine_name}")
     data object CurrentTasksScreen : Screens("current_tasks_screen")
+    data object AddDefectScreen : Screens("add_defect_screen")
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -29,11 +30,14 @@ fun Navigation() {
             MainScreen(navController)
         }
         composable(Screens.SocketsT01Screen.route) {
-            SocketScreen(machineName = "Telerobot 1",list = listOf("Lid", "Frame", "Cutter", "Lid12", "Frame12", "Cutter12"))
+            SocketScreen(
+                machineName = "Telerobot 1",
+                list = listOf("Lid", "Frame", "Cutter", "Lid12", "Frame12", "Cutter12")
+            )
         }
-        composable(Screens.SocketsT02_7_Screen.route) {navBackStackEntry ->
+        composable(Screens.SocketsT02_7_Screen.route) { navBackStackEntry ->
             val machineName = navBackStackEntry.arguments?.getString("machine_name")
-            machineName?.let { title->
+            machineName?.let { title ->
                 SocketScreen(
                     machineName = title,
                     list = listOf("Lid", "Frame", "Cutter")
@@ -41,169 +45,45 @@ fun Navigation() {
             }
         }
         composable(Screens.CurrentTasksScreen.route) {
-            CurrentTasksScreen(navController, tasksList = CurrentTasksList(listOf(
-                CurrentTask(
-                    task = "Заменить техническую оснастку на Телероботе №1",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №2",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "Выполнена",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "Отменена",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "Создана",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-                CurrentTask(
-                    task = "Задача №3",
-                    workers = listOf("Worker1", "Worker2"),
-                    status = "В работе",
-                    techCard = "",
-                    pathToPhoto = "",
-                    createTime = "01-01-01 15:16:17.99999",
-                    author = "Сысоев Илья",
-                    spentRepairParts = listOf("Part1", "Part2")
-                ),
-            ))
+            CurrentTasksScreen(
+                navController, tasksList = CurrentTasksList(
+                    listOf(
+                        CurrentTask(
+                            task = "Заменить техническую оснастку на Телероботе №1",
+                            workers = listOf("Worker1", "Worker2"),
+                            status = "В работе",
+                            techCard = "",
+                            pathToPhoto = "",
+                            createTime = "01-01-01 15:16:17.99999",
+                            author = "Сысоев Илья",
+                            spentRepairParts = listOf("Part1", "Part2")
+                        ),
+                        CurrentTask(
+                            task = "Задача №2",
+                            workers = listOf("Worker1", "Worker2"),
+                            status = "В работе",
+                            techCard = "",
+                            pathToPhoto = "",
+                            createTime = "01-01-01 15:16:17.99999",
+                            author = "Сысоев Илья",
+                            spentRepairParts = listOf("Part1", "Part2")
+                        ),
+                        CurrentTask(
+                            task = "Задача №3",
+                            workers = listOf("Worker1", "Worker2"),
+                            status = "Выполнена",
+                            techCard = "",
+                            pathToPhoto = "",
+                            createTime = "01-01-01 15:16:17.99999",
+                            author = "Сысоев Илья",
+                            spentRepairParts = listOf("Part1", "Part2")
+                        ),
+                    )
+                )
             )
+        }
+        composable(Screens.AddDefectScreen.route) {
+            AddDefectScreen()
         }
     }
 }

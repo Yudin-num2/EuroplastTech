@@ -43,4 +43,5 @@
     <string name="completed">Выполнено</string>
     <string name="change_status">Сменить статус</string>
     <string name="get_to_work">Взять в работу</string>
+    <string name="get_image_from">Откуда брать фото?</string>
 </resources>

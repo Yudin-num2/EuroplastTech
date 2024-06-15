@@ -82,7 +82,7 @@ fun MainScreen(navController: NavController = rememberNavController()
             painter = painterResource(id = R.drawable.ic_background_img),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().zIndex(-1f)
         )
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row {
@@ -129,7 +129,7 @@ fun MainScreen(navController: NavController = rememberNavController()
 
             Row {
                 Button(
-                    onClick = { /* TODO */ },
+                    onClick = { navController.navigate(Screens.AddDefectScreen.route) },
                     modifier = Modifier
                         .padding(horizontal = 40.dp, vertical = 8.dp)
                         .fillMaxWidth(),
