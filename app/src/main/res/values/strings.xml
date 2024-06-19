@@ -61,4 +61,10 @@
     <!--                 -->
     <string name="unknown">Unknown</string>
     <string name="get_image_from">Where do get the photo from?</string>
+    <string name="snackbar_dont_get_permisson_camera">Without permission to use the camera, you will not be able to attach photos from the camera!
+You can change the permissions in the system settings</string>
+    <string name="defect_title_label">Title</string>
+    <string name="enter_machine">Enter machine</string>
+    <string name="enter_element">Enter element</string>
+    <string name="machine_stop_switch">Did the defect cause the entire \n machine to stop?</string>
 </resources>

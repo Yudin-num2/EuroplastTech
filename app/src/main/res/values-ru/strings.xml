@@ -44,4 +44,10 @@
     <string name="change_status">Сменить статус</string>
     <string name="get_to_work">Взять в работу</string>
     <string name="get_image_from">Откуда брать фото?</string>
+    <string name="snackbar_dont_get_permisson_camera">Без разрешения на использование камеры, Вы не сможете прикреплять фото с камеры!
+                        Изменить разрешения Вы можете в настройках системы</string>
+    <string name="defect_title_label">Название</string>
+    <string name="enter_machine">Введите машину</string>
+    <string name="machine_stop_switch">Дефект вызвал останов\nвсей машины?</string>
+    <string name="enter_element">Введите отказавший элемент</string>
 </resources>
