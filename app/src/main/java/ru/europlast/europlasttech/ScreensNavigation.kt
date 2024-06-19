@@ -16,6 +16,7 @@ sealed class Screens(val route: String) {
     data object SocketsT02_7_Screen : Screens("sockets_t02_7_screen/{machine_name}")
     data object CurrentTasksScreen : Screens("current_tasks_screen")
     data object AddDefectScreen : Screens("add_defect_screen")
+    data object AddAnomalyScreen : Screens("add_anomaly_screen")
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -84,6 +85,9 @@ fun Navigation() {
         }
         composable(Screens.AddDefectScreen.route) {
             AddDefectScreen()
+        }
+        composable(Screens.AddAnomalyScreen.route) {
+            AddAnomalyScreen()
         }
     }
 }

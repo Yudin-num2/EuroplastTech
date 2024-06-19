@@ -147,7 +147,7 @@ fun MainScreen(navController: NavController = rememberNavController()
             }
             Row {
                 Button(
-                    onClick = { /* TODO */ },
+                    onClick = { navController.navigate(Screens.AddAnomalyScreen.route) },
                     modifier = Modifier
                         .padding(horizontal = 40.dp, vertical = 8.dp)
                         .fillMaxWidth(),
