@@ -29,7 +29,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
@@ -69,6 +71,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import ru.europlast.europlasttech.ui.theme.SaveAndExitBtn
 import ru.europlast.europlasttech.ui.theme.SaveAndExitBtnBorder
 
@@ -84,9 +87,8 @@ class AddAnomalyActivity: ComponentActivity() {
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showSystemUi = true)
 @Composable
-fun AddAnomalyScreen() {
+fun AddAnomalyScreen(navController: NavController) {
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var selectedImageBitmap by rememberSaveable { mutableStateOf<Bitmap?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -145,8 +147,8 @@ fun AddAnomalyScreen() {
                     .width(30.dp)
                     .height(30.dp)
                     .align(Alignment.TopStart)
-                    .clickable { /*navController.navigate(Screens.MainScreen.route){
-                    popUpTo("current_tasks_screen") { inclusive = true }}*/
+                    .clickable { navController.navigate(Screens.MainScreen.route){
+                    popUpTo("add_anomaly_screen") { inclusive = true }}
                     }
                     .zIndex(2f),
             )
@@ -224,6 +226,7 @@ fun AddAnomalyScreen() {
             Column(
                 modifier = Modifier
                     .padding(top = 400.dp)
+                    .verticalScroll(rememberScrollState(), enabled = true)
             ) {
                 Card(
                     modifier = Modifier
@@ -287,11 +290,12 @@ fun AddAnomalyScreen() {
                                         color = Color.Black
                                     ))
                             },
+                            readOnly = true,
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                             },
                             modifier = Modifier
-                                .menuAnchor() // This is important to position the dropdown correctly
+                                .menuAnchor()
                                 .fillMaxWidth(),
                             colors = ExposedDropdownMenuDefaults.textFieldColors()
                         )
@@ -327,7 +331,11 @@ fun AddAnomalyScreen() {
                         onValueChange = {anomalyComment = it})
                 }
                 Spacer(modifier = Modifier.padding(10.dp))
-                Button(onClick = { /*TODO Write on server and navController.navigate*/ },
+                Button(onClick = {
+                    navController.navigate(Screens.MainScreen.route){
+                        popUpTo("add_anomaly_screen") { inclusive = true }}
+                }
+                                 /*TODO Write on server and navController.navigate*/ ,
                     modifier = Modifier
                         .padding(horizontal = 40.dp)
                         .fillMaxWidth()

@@ -27,10 +27,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
@@ -75,6 +78,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getString
+import androidx.navigation.NavController
 import ru.europlast.europlasttech.ui.theme.SaveAndExitBtn
 import ru.europlast.europlasttech.ui.theme.SaveAndExitBtnBorder
 
@@ -89,9 +93,8 @@ class AddDefectActivity : ComponentActivity() {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showSystemUi = true)
 @Composable
-fun AddDefectScreen() {
+fun AddDefectScreen(navController: NavController) {
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var selectedImageBitmap by rememberSaveable { mutableStateOf<Bitmap?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -151,8 +154,8 @@ fun AddDefectScreen() {
                     .width(30.dp)
                     .height(30.dp)
                     .align(Alignment.TopStart)
-                    .clickable { /*navController.navigate(Screens.MainScreen.route){
-                    popUpTo("current_tasks_screen") { inclusive = true }}*/
+                    .clickable { navController.navigate(Screens.MainScreen.route){
+                    popUpTo("add_defect_screen") { inclusive = true }}
                     }
                     .zIndex(2f),
             )
@@ -293,11 +296,12 @@ fun AddDefectScreen() {
                                         color = Color.Black
                                     ))
                                     },
+                            readOnly = true,
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                             },
                             modifier = Modifier
-                                .menuAnchor() // This is important to position the dropdown correctly
+                                .menuAnchor()
                                 .fillMaxWidth(),
                             colors = ExposedDropdownMenuDefaults.textFieldColors()
                         )
@@ -327,10 +331,17 @@ fun AddDefectScreen() {
                     border = BorderStroke(1.dp, color = Color.LightGray)
                 ) {
                     var expandedElement by remember { mutableStateOf(false) }
-                    val elements = listOf("Option 1", "Option 2", "Option 3") //TODO MACHINE ELEMENTS
+                    val elements = listOf(
+                        "Option 1", "Option 2", "Option 3",
+                        "Option 4", "Option 5", "Option 6",
+                        "Option 7", "Option 8", "Option 9",
+                        "Option 1", "Option 2", "Option 3",
+                        "Option 4", "Option 5", "Option 6",
+                        "Option 7", "Option 8", "Option 9") //TODO MACHINE ELEMENTS
                     ExposedDropdownMenuBox(
                         expanded = expandedElement,
-                        onExpandedChange = { expandedElement = !expandedElement }
+                        onExpandedChange = { expandedElement = !expandedElement },
+
                     ) {
                         TextField(
                             value = elementName,
@@ -343,17 +354,20 @@ fun AddDefectScreen() {
                                         color = Color.Black
                                     ))
                                     },
+                            readOnly = true,
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedElement)
                             },
                             modifier = Modifier
-                                .menuAnchor() // This is important to position the dropdown correctly
+                                .menuAnchor()
                                 .fillMaxWidth(),
                             colors = ExposedDropdownMenuDefaults.textFieldColors()
                         )
                         ExposedDropdownMenu(
                             expanded = expandedElement,
-                            onDismissRequest = { expandedElement = false }
+                            onDismissRequest = { expandedElement = false },
+                            modifier = Modifier.verticalScroll(rememberScrollState(), enabled = true)
+                                .heightIn(max = 150.dp)
                         ) {
                             elements.forEach { selectionElement ->
                                 DropdownMenuItem(
@@ -390,7 +404,9 @@ fun AddDefectScreen() {
 
                 }
                 Spacer(modifier = Modifier.padding(10.dp))
-                Button(onClick = { /*TODO Write on server and navController.navigate*/ },
+                Button(onClick = { navController.navigate(Screens.MainScreen.route){
+                    popUpTo("add_defect_screen") { inclusive = true }}
+                    /*TODO write on server*/},
                     modifier = Modifier
                         .padding(horizontal = 40.dp)
                         .fillMaxWidth()

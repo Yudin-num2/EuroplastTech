@@ -84,10 +84,10 @@ fun Navigation() {
             )
         }
         composable(Screens.AddDefectScreen.route) {
-            AddDefectScreen()
+            AddDefectScreen(navController)
         }
         composable(Screens.AddAnomalyScreen.route) {
-            AddAnomalyScreen()
+            AddAnomalyScreen(navController)
         }
     }
 }
