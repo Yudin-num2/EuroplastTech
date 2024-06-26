@@ -5,8 +5,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import ru.europlast.europlasttech.data.CurrentTask
 import ru.europlast.europlasttech.data.CurrentTasksList
+import ru.europlast.europlasttech.data.NetworkInterface
 import ru.europlast.europlasttech.sockets.SocketScreen
 
 sealed class Screens(val route: String) {
@@ -22,10 +27,20 @@ sealed class Screens(val route: String) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Navigation() {
+    val interceptor = HttpLoggingInterceptor()
+    interceptor.level = HttpLoggingInterceptor.Level.BODY
+    val client = OkHttpClient.Builder()
+        .addInterceptor(interceptor)
+        .build()
+    val retrofit = Retrofit.Builder()
+        .client(client)
+        .baseUrl("http://10.0.2.2:8000")
+        .addConverterFactory(GsonConverterFactory.create()).build()
+    val networkAPI = retrofit.create(NetworkInterface::class.java)
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screens.LoginScreen.route) {
         composable(Screens.LoginScreen.route) {
-            LoginScreen(navController)
+            LoginScreen(navController, networkAPI)
         }
         composable(Screens.MainScreen.route) {
             MainScreen(navController)

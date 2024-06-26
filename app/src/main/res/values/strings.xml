@@ -67,4 +67,7 @@ You can change the permissions in the system settings</string>
     <string name="enter_machine">Enter machine</string>
     <string name="enter_element">Enter element</string>
     <string name="machine_stop_switch">Did the defect cause the entire \n machine to stop?</string>
+
+    <string name="check_your_credentials">Invalid login or password</string>
+
 </resources>

@@ -50,4 +50,5 @@
     <string name="enter_machine">Введите машину</string>
     <string name="machine_stop_switch">Дефект вызвал останов\nвсей машины?</string>
     <string name="enter_element">Введите отказавший элемент</string>
+    <string name="check_your_credentials">Неверный логин или пароль</string>
 </resources>
