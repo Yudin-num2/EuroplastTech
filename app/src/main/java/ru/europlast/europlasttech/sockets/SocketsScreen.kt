@@ -115,7 +115,7 @@ fun SocketScreen(
 
         ScrollableTabRow(
             modifier = Modifier
-                .height(55.dp)
+                .height(56.dp)
                 .zIndex(3f),
             selectedTabIndex = pagerState.currentPage,
             indicator = indicator,
@@ -144,15 +144,22 @@ fun SocketScreen(
             Box(
                 contentAlignment = Alignment.Center
             ) {
-                when (page) {
-                    0 -> LidSockets48()
-                    1 -> FrameSockets48()
-                    2 -> CutterSockets48()
-                    3 -> LidSockets12()
-                    4 -> FrameSockets12()
-                    5 -> CutterSockets12()
+                if (machineName == "Telerobot 3"){
+                    when (page){
+                        0 -> LidSockets64()
+                        1 -> FrameSockets64()
+                        2 -> CutterSockets64()
+                    }
+                }else {
+                    when (page) {
+                        0 -> LidSockets48()
+                        1 -> FrameSockets48()
+                        2 -> CutterSockets48()
+                        3 -> LidSockets12()
+                        4 -> FrameSockets12()
+                        5 -> CutterSockets12()
+                    }
                 }
-
             }
         }
     }
