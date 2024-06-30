@@ -10,7 +10,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.europlast.europlasttech.data.CurrentTask
-import ru.europlast.europlasttech.data.CurrentTasksList
 import ru.europlast.europlasttech.data.NetworkInterface
 import ru.europlast.europlasttech.sockets.SocketScreen
 
@@ -62,42 +61,7 @@ fun Navigation() {
         }
         composable(Screens.CurrentTasksScreen.route) {
             CurrentTasksScreen(
-                navController, tasksList = CurrentTasksList(
-                    listOf(
-                        CurrentTask(
-                            task = "Заменить техническую оснастку на Телероботе №1",
-                            workers = listOf("Worker1", "Worker2"),
-                            status = "В работе",
-                            techCard = "",
-                            pathToPhoto = "",
-                            createTime = "01-01-01 15:16:17.99999",
-                            author = "Сысоев Илья",
-                            spentRepairParts = listOf("Part1", "Part2")
-                        ),
-                        CurrentTask(
-                            task = "Задача №2",
-                            workers = listOf("Worker1", "Worker2"),
-                            status = "В работе",
-                            techCard = "",
-                            pathToPhoto = "",
-                            createTime = "01-01-01 15:16:17.99999",
-                            author = "Сысоев Илья",
-                            spentRepairParts = listOf("Part1", "Part2")
-                        ),
-                        CurrentTask(
-                            task = "Задача №3",
-                            workers = listOf("Worker1", "Worker2"),
-                            status = "Выполнена",
-                            techCard = "",
-                            pathToPhoto = "",
-                            createTime = "01-01-01 15:16:17.99999",
-                            author = "Сысоев Илья",
-                            spentRepairParts = listOf("Part1", "Part2")
-                        ),
-                    )
-                )
-            )
-        }
+                navController, networkAPI)}
         composable(Screens.AddDefectScreen.route) {
             AddDefectScreen(navController)
         }

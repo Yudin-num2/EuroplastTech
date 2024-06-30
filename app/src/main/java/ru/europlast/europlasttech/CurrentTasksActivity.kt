@@ -36,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,8 +67,12 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.europlast.europlasttech.data.CurrentTask
-import ru.europlast.europlasttech.data.CurrentTasksList
+import ru.europlast.europlasttech.data.NetworkInterface
 import ru.europlast.europlasttech.ui.theme.Black
 import ru.europlast.europlasttech.ui.theme.EvpCyan
 import ru.europlast.europlasttech.ui.theme.SaveAndExitBtn
@@ -84,9 +89,25 @@ class CurrentTasksActivity : ComponentActivity() {
 }
 
 @Composable
-fun CurrentTasksScreen(navController: NavController, tasksList: CurrentTasksList) {
-    Box(modifier = Modifier
-        .fillMaxSize(),
+fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterface) {
+    val tasksList = remember { mutableStateOf<List<CurrentTask>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        try {
+            val response = networkAPI.getCurrentTasks()
+            if (response.isSuccessful) {
+                tasksList.value = response.body()?: emptyList()
+            } else {
+                Log.e("CurrentTasksScreen", "Error: ${response.errorBody()}")
+            }
+        } catch (e: Exception) {
+            Log.e("CurrentTasksScreen", "Error updating task list: ${e.message}")
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
         Image(
@@ -97,52 +118,56 @@ fun CurrentTasksScreen(navController: NavController, tasksList: CurrentTasksList
                 .fillMaxSize()
                 .zIndex(-1f)
         )
-        Row(modifier = Modifier
-            .fillMaxWidth()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
 //            .height(40.dp)
-            .padding(15.dp),
+                .padding(15.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-        ){
+        ) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,
                 contentDescription = "return Icon",
                 tint = Color.Black,
                 modifier = Modifier
-                    .padding(top = 15.dp, end = 15.dp,)
+                    .padding(top = 15.dp, end = 15.dp)
                     .width(30.dp)
                     .height(30.dp)
-                    .clickable { navController.navigate(Screens.MainScreen.route){
-                        popUpTo("current_tasks_screen") { inclusive = true }}
+                    .clickable {
+                        navController.navigate(Screens.MainScreen.route) {
+                            popUpTo("current_tasks_screen") { inclusive = true }
+                        }
                     }
                     .zIndex(1f),
 
-            )
+                )
             Icon(
                 imageVector = Icons.Filled.Refresh,
                 contentDescription = "close Dialog Icon",
                 tint = Color.Green,
                 modifier = Modifier
-                    .padding(top = 15.dp, end = 15.dp,)
+                    .padding(top = 15.dp, end = 15.dp)
                     .width(30.dp)
                     .height(30.dp)
                     .clickable { /* TODO */ }
                     .zIndex(1f),
 
-            )
+                )
         }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 70.dp, bottom = 15.dp, end = 20.dp, start = 20.dp,)
-                .zIndex(1f),
+                .padding(top = 70.dp, bottom = 15.dp, end = 20.dp, start = 20.dp)
+                .zIndex(2f),
         ) {
-            itemsIndexed(tasksList.currentTasks.toList()) { _, item ->
+            itemsIndexed(tasksList.value) { _, item ->
                 CurrentTaskCard(task = item)
             }
         }
     }
 }
+
 
 @Composable
 //@Preview
@@ -150,27 +175,36 @@ fun CurrentTaskCard(task: CurrentTask) {
     val textColor by remember { mutableStateOf(Color.Black) }
     var isDialogVisible by remember { mutableStateOf(false) }
     val statusColor = when (task.status) {
-        stringResource(R.string.in_progress_status) -> Color.Yellow
-        stringResource(R.string.completed_status) -> Color.Green
-        stringResource(R.string.canceled_status) -> Color.Gray
-        stringResource(R.string.created_status) -> Color.Red
-        else -> {MaterialTheme.colorScheme.primary}
+        "В работе" -> Color.Yellow
+        "Выполнена" -> Color.Green
+        "Отменена" -> Color.Gray
+        "Создана" -> Color.Red
+        else -> {
+            MaterialTheme.colorScheme.primary
+        }
     }
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(bottom = 10.dp)
-        .clickable(onClick = { isDialogVisible = !isDialogVisible }),
-        elevation = CardDefaults.cardElevation(5.dp),) {
-        Row(modifier = Modifier.padding(16.dp),
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp)
+            .clickable(onClick = { isDialogVisible = !isDialogVisible }),
+        elevation = CardDefaults.cardElevation(5.dp),
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
-            Box(modifier = Modifier
-                .height(30.dp)
-                .width(30.dp)
-                .clip(shape = RoundedCornerShape(30.dp))
-                .background(color = statusColor))
-            Text(modifier = Modifier.padding(horizontal = 10.dp),
+            Box(
+                modifier = Modifier
+                    .height(30.dp)
+                    .width(30.dp)
+                    .clip(shape = RoundedCornerShape(30.dp))
+                    .background(color = statusColor)
+            )
+            Text(
+                modifier = Modifier.padding(horizontal = 10.dp),
                 text = task.task,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -189,10 +223,11 @@ fun CurrentTaskCard(task: CurrentTask) {
 }
 
 @Composable
-fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit){
-    var changeStatusCode by remember{ mutableStateOf(false) }
+fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit) {
+    var changeStatusCode by remember { mutableStateOf(false) }
 
-    Dialog(onDismissRequest = {  },
+    Dialog(
+        onDismissRequest = { },
         properties = DialogProperties(dismissOnClickOutside = true)
     ) {
         Surface(
@@ -207,7 +242,7 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit){
                     contentDescription = "close Dialog Icon",
                     tint = colorResource(android.R.color.darker_gray),
                     modifier = Modifier
-                        .padding(top = 15.dp, end = 15.dp,)
+                        .padding(top = 15.dp, end = 15.dp)
                         .width(30.dp)
                         .height(30.dp)
                         .clickable { onDismiss() }
@@ -219,11 +254,12 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit){
                     contentDescription = "Save Icon",
                     tint = colorResource(android.R.color.darker_gray),
                     modifier = Modifier
-                        .padding(top = 15.dp, start = 15.dp,)
+                        .padding(top = 15.dp, start = 15.dp)
                         .width(30.dp)
                         .height(30.dp)
                         .clickable { /*TODO request on server*/
-                        onDismiss()}
+                            onDismiss()
+                        }
                         .zIndex(1f)
                         .align(Alignment.TopStart),
                 )
@@ -249,7 +285,8 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit){
                     }
                     Image(
                         painter = rememberAsyncImagePainter(
-                            model = "https://avatars.mds.yandex.net/i?id=0aef40c429ff11a449a8329ef6de247211b6b28a-12512933-images-thumbs&n=13"),
+                            model = "https://avatars.mds.yandex.net/i?id=0aef40c429ff11a449a8329ef6de247211b6b28a-12512933-images-thumbs&n=13"
+                        ),
                         contentDescription = "Task picture",
                         modifier = Modifier
                             .height(200.dp)
@@ -257,108 +294,137 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit){
                             .align(Alignment.CenterHorizontally),
                         contentScale = ContentScale.Fit,
                     )
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
-                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
-                        .padding(3.dp),
-                        contentAlignment = Alignment.Center){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                            .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
+                            .padding(3.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
 
-                        Text(text = stringResource(id = ru.europlast.europlasttech.R.string.workers),
+                        Text(
+                            text = stringResource(id = ru.europlast.europlasttech.R.string.workers),
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black,)
+                                color = Color.Black,
+                            )
                         )
                     }
-                    choisenCard.workers.forEachIndexed() {index, worker ->
-                        Text(text = "${index + 1}. $worker",
+                    choisenCard.workers.forEachIndexed() { index, worker ->
+                        Text(
+                            text = "${index + 1}. $worker",
                             style = TextStyle(
                                 fontSize = 15.sp,
                                 fontStyle = FontStyle.Italic,
-                                color = Color.Black),
+                                color = Color.Black
+                            ),
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
                     }
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
-                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
-                        .padding(3.dp),
-                        contentAlignment = Alignment.Center){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                            .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
+                            .padding(3.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
 
-                        Text(text = stringResource(id = ru.europlast.europlasttech.R.string.status),
+                        Text(
+                            text = stringResource(id = ru.europlast.europlasttech.R.string.status),
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black,)
+                                color = Color.Black,
+                            )
                         )
                     }
-                    Text(text = choisenCard.status,
+                    Text(
+                        text = choisenCard.status,
                         style = TextStyle(
                             fontSize = 15.sp,
                             fontStyle = FontStyle.Italic,
-                            color = Color.Black),
+                            color = Color.Black
+                        ),
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
-                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
-                        .padding(3.dp),
-                        contentAlignment = Alignment.Center){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                            .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
+                            .padding(3.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
 
-                        Text(text = when(choisenCard.status) {
-                            stringResource(ru.europlast.europlasttech.R.string.in_progress_status) ->
-                                stringResource(ru.europlast.europlasttech.R.string.in_progress_date)
-                            stringResource(ru.europlast.europlasttech.R.string.completed_status) ->
-                                stringResource(ru.europlast.europlasttech.R.string.completed_date)
-                            stringResource(ru.europlast.europlasttech.R.string.canceled_status) ->
-                                stringResource(ru.europlast.europlasttech.R.string.canceled_date)
-                            stringResource(ru.europlast.europlasttech.R.string.created_status) ->
-                                stringResource(ru.europlast.europlasttech.R.string.created_date)
-                            else -> stringResource(ru.europlast.europlasttech.R.string.unknown)
-                        },
+                        Text(
+                            text = when (choisenCard.status) {
+                                stringResource(ru.europlast.europlasttech.R.string.in_progress_status) ->
+                                    stringResource(ru.europlast.europlasttech.R.string.in_progress_date)
+
+                                stringResource(ru.europlast.europlasttech.R.string.completed_status) ->
+                                    stringResource(ru.europlast.europlasttech.R.string.completed_date)
+
+                                stringResource(ru.europlast.europlasttech.R.string.canceled_status) ->
+                                    stringResource(ru.europlast.europlasttech.R.string.canceled_date)
+
+                                stringResource(ru.europlast.europlasttech.R.string.created_status) ->
+                                    stringResource(ru.europlast.europlasttech.R.string.created_date)
+
+                                else -> stringResource(ru.europlast.europlasttech.R.string.unknown)
+                            },
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black,),
+                                color = Color.Black,
+                            ),
                             modifier = Modifier.padding(horizontal = 15.dp),
                             textAlign = TextAlign.Center
                         )
                     }
-                    Text(text = choisenCard.createTime,
+                    Text(
+                        text = choisenCard.createTime,
                         style = TextStyle(
                             fontSize = 15.sp,
                             fontStyle = FontStyle.Italic,
-                            color = Color.Black),
+                            color = Color.Black
+                        ),
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
-                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
-                        .padding(3.dp),
-                        contentAlignment = Alignment.Center){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                            .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
+                            .padding(3.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
 
-                        Text(text = stringResource(id = ru.europlast.europlasttech.R.string.author),
+                        Text(
+                            text = stringResource(id = ru.europlast.europlasttech.R.string.author),
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black,)
+                                color = Color.Black,
+                            )
                         )
                     }
-                    Text(text = choisenCard.author,
+                    Text(
+                        text = choisenCard.author,
                         style = TextStyle(
                             fontSize = 15.sp,
                             fontStyle = FontStyle.Italic,
-                            color = Color.Black),
+                            color = Color.Black
+                        ),
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
                     if (choisenCard.status != stringResource(ru.europlast.europlasttech.R.string.completed_status) &&
                         choisenCard.status != stringResource(ru.europlast.europlasttech.R.string.canceled_status)
-                    )  {
-                        Button(onClick = { changeStatusCode = true },
+                    ) {
+                        Button(
+                            onClick = { changeStatusCode = true },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(50.dp)
@@ -368,25 +434,30 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit){
                                     shape = RoundedCornerShape(20.dp)
                                 ),
                             colors = ButtonDefaults.buttonColors(SaveAndExitBtn)
-                        ){
-                            Text(text = when(choisenCard.status) {
-                                stringResource(ru.europlast.europlasttech.R.string.in_progress_status) ->
-                                    stringResource(ru.europlast.europlasttech.R.string.change_status)
-                                stringResource(ru.europlast.europlasttech.R.string.created_status) ->
-                                    stringResource(ru.europlast.europlasttech.R.string.get_to_work)
-                                else -> {
-                                    stringResource(ru.europlast.europlasttech.R.string.unknown)
-                                }},
+                        ) {
+                            Text(
+                                text = when (choisenCard.status) {
+                                    stringResource(ru.europlast.europlasttech.R.string.in_progress_status) ->
+                                        stringResource(ru.europlast.europlasttech.R.string.change_status)
+
+                                    stringResource(ru.europlast.europlasttech.R.string.created_status) ->
+                                        stringResource(ru.europlast.europlasttech.R.string.get_to_work)
+
+                                    else -> {
+                                        stringResource(ru.europlast.europlasttech.R.string.unknown)
+                                    }
+                                },
                                 style = TextStyle(
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black,
-                                    textAlign = TextAlign.Center)
+                                    textAlign = TextAlign.Center
+                                )
                             )
 
                         }
-                        if (changeStatusCode){
-                            ChangeStatus(onDismiss = {changeStatusCode = false})
+                        if (changeStatusCode) {
+                            ChangeStatus(onDismiss = { changeStatusCode = false })
                         }
                     }
 
@@ -421,12 +492,17 @@ fun ChangeStatus(onDismiss: () -> Unit) {
                         .zIndex(1f)
                         .align(Alignment.TopEnd),
                 )
-                Column(modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.SpaceBetween) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
                     Spacer(modifier = Modifier.padding(20.dp))
-                    Row(){
-                        Button(onClick = { onDismiss()
-                                         /*TODO (обработка смены статуса)*/},
+                    Row() {
+                        Button(
+                            onClick = {
+                                onDismiss()
+                                /*TODO (обработка смены статуса)*/
+                            },
                             modifier = Modifier
                                 .shadow(5.dp, shape = RoundedCornerShape(30.dp))
                                 .padding(horizontal = 4.dp)
@@ -434,15 +510,20 @@ fun ChangeStatus(onDismiss: () -> Unit) {
                                 .zIndex(1f),
                             colors = ButtonDefaults.buttonColors(Color.Yellow)
                         ) {
-                            Text(text = stringResource(id = R.string.in_progress_status),
+                            Text(
+                                text = stringResource(id = R.string.in_progress_status),
                                 textAlign = TextAlign.Center,
-                                color = Color.Black)
+                                color = Color.Black
+                            )
 
                         }
                     }
-                    Row(modifier = Modifier.padding(vertical = 10.dp)){
-                        Button(onClick = { onDismiss()
-                            /*TODO (обработка смены статуса)*/ },
+                    Row(modifier = Modifier.padding(vertical = 10.dp)) {
+                        Button(
+                            onClick = {
+                                onDismiss()
+                                /*TODO (обработка смены статуса)*/
+                            },
                             modifier = Modifier
                                 .shadow(5.dp, shape = RoundedCornerShape(30.dp))
                                 .padding(horizontal = 4.dp)
@@ -450,15 +531,20 @@ fun ChangeStatus(onDismiss: () -> Unit) {
                                 .zIndex(1f),
                             colors = ButtonDefaults.buttonColors(Color.Gray)
                         ) {
-                            Text(text = stringResource(id = R.string.canceled_status),
+                            Text(
+                                text = stringResource(id = R.string.canceled_status),
                                 textAlign = TextAlign.Center,
-                                color = Color.Black)
+                                color = Color.Black
+                            )
 
                         }
                     }
-                    Row(){
-                        Button(onClick = { onDismiss()
-                            /*TODO (обработка смены статуса)*/ },
+                    Row() {
+                        Button(
+                            onClick = {
+                                onDismiss()
+                                /*TODO (обработка смены статуса)*/
+                            },
                             modifier = Modifier
                                 .shadow(5.dp, shape = RoundedCornerShape(30.dp))
                                 .padding(horizontal = 4.dp)
@@ -466,9 +552,11 @@ fun ChangeStatus(onDismiss: () -> Unit) {
                                 .zIndex(1f),
                             colors = ButtonDefaults.buttonColors(Color.Green)
                         ) {
-                            Text(text = stringResource(id = R.string.completed_status),
+                            Text(
+                                text = stringResource(id = R.string.completed_status),
                                 textAlign = TextAlign.Center,
-                                color = Color.Black)
+                                color = Color.Black
+                            )
 
                         }
                     }

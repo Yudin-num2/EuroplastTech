@@ -1,6 +1,7 @@
 package ru.europlast.europlasttech.data
 
 data class CurrentTask(
+    val id: Int = 0,
     val task: String = "Пусто",
     val workers: List<String> = listOf("Пусто"),
     val status: String = "Пусто",
@@ -11,8 +12,5 @@ data class CurrentTask(
     val spentRepairParts: List<String> = listOf("Пусто"),
 )
 
-data class CurrentTasksList(
-    val currentTasks: List<CurrentTask>
-)
 
 

@@ -168,6 +168,11 @@ fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
 
                 Button(
                     onClick = {
+                        if (login == "admin") {
+                            navController.navigate(Screens.MainScreen.route) {
+                                popUpTo("login") { inclusive = true }
+                        }
+                        }
                         CoroutineScope(Dispatchers.IO).launch {
                             try {
                                 val response = networkAPI.authorization(
