@@ -1,5 +1,6 @@
 package ru.europlast.europlasttech
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +21,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -38,13 +41,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -83,8 +90,10 @@ class LoginActivity : ComponentActivity() {
 @Composable
 fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
     val snackbarHostState = remember { SnackbarHostState() }
-    var isAuthSuccessfull by remember { mutableStateOf(true) }
+    val isAuthSuccessfull by remember { mutableStateOf(true) }
     val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) {paddingValues ->
         Box(
@@ -125,10 +134,17 @@ fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
                         color = Color.White,
                         modifier = Modifier.padding(start = 25.dp)
                     )
+
                     OutlinedTextField(
                         value = login,
                         onValueChange = { login = it },
                         textStyle = TextStyle(color = Color.Black),
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions(
+                            onNext = {
+                                focusManager.moveFocus(FocusDirection.Down)
+                            }),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 20.dp, end = 20.dp)
@@ -145,7 +161,7 @@ fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
                 }
                 Column {
                     Text(
-                        text = stringResource(id = R.string.password_label),
+                        text = stringResource(R.string.password_label),
                         fontSize = 20.sp,
                         color = Color.White,
                         modifier = Modifier.padding(start = 25.dp)
@@ -156,6 +172,13 @@ fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
                         onValueChange = { password = it },
                         textStyle = TextStyle(color = Color.Black),
                         visualTransformation = PasswordVisualTransformation(),
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                keyboardController?.hide()
+                                onAuthClick(navController, networkAPI, login, password, context)
+                            }),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 20.dp, end = 20.dp)
@@ -167,55 +190,7 @@ fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
                 Spacer(modifier = Modifier.height(80.dp))
 
                 Button(
-                    onClick = {
-                        if (login == "admin") {
-                            navController.navigate(Screens.MainScreen.route) {
-                                popUpTo("login") { inclusive = true }
-                        }
-                        }
-                        CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                val response = networkAPI.authorization(
-                                    login = login, password = password
-                                )
-                                if (response.isSuccessful) {
-                                    val authResponse = response.body().toString()
-                                    println(authResponse)
-                                    if (authResponse == "{\"details\": \"user not found\"}") {
-                                        withContext(Dispatchers.Main) {
-                                            isAuthSuccessfull = false
-                                        }
-                                    }else {
-
-                                        val user = User(
-                                            id = authResponse[0].code,
-                                            login = authResponse[1].toString(),
-                                            password = authResponse[2].toString(),
-                                            name = authResponse[3].toString(),
-                                            surname = authResponse[4].toString(),
-                                            room = authResponse[5].toString(),
-                                            post = authResponse[6].toString()
-                                        )
-                                        withContext(Dispatchers.Main) {
-                                            isAuthSuccessfull = true
-                                            navController.navigate(Screens.MainScreen.route) {
-                                                popUpTo("login") { inclusive = true }
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    Toast.makeText(context,
-                                        "Response is not successful",
-                                        Toast.LENGTH_SHORT).show()
-                                }
-                            } catch (error: ConnectException) {
-                                Log.d("ConnectException", "Error: $error")
-                            } catch (error: Exception) {
-                                Log.d("Exception", "Error: $error")
-                            }
-                        }
-
-                    },
+                    onClick = { onAuthClick(navController, networkAPI, login, password, context) },
 
                     modifier = Modifier
                         .fillMaxWidth()
@@ -239,15 +214,62 @@ fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
 
     }
 
-    LaunchedEffect(isAuthSuccessfull) {
-        if (!isAuthSuccessfull) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.check_your_credentials),
-                Toast.LENGTH_SHORT).show()
-        }
-    }
 }
+
+fun onAuthClick(navController: NavController, networkAPI: NetworkInterface,
+                login: String, password: String, context: Context){
+        if (login == "admin") {
+            navController.navigate(Screens.MainScreen.route) {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = networkAPI.authorization(
+                    login = login, password = password
+                )
+                if (response.isSuccessful) {
+                    val authResponse = response.body().toString()
+                    println(authResponse)
+                    if (authResponse == "{\"details\": \"user not found\"}") {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.check_your_credentials),
+                                Toast.LENGTH_SHORT).show()
+                        }
+                    }else {
+
+//                        val user = User(
+//                            id = authResponse[0].code,
+//                            login = authResponse[1].toString(),
+//                            password = authResponse[2].toString(),
+//                            name = authResponse[3].toString(),
+//                            surname = authResponse[4].toString(),
+//                            room = authResponse[5].toString(),
+//                            post = authResponse[6].toString()
+//                        )
+                        withContext(Dispatchers.Main) {
+                            navController.navigate(Screens.MainScreen.route) {
+                                popUpTo("login") { inclusive = true }
+                            }
+                        }
+                    }
+                } else {
+                    Toast.makeText(context,
+                        "Response is not successful",
+                        Toast.LENGTH_SHORT).show()
+                }
+            } catch (error: ConnectException) {
+                Log.d("ConnectException", "Error: $error")
+            } catch (error: Exception) {
+                Log.d("Exception", "Error: $error")
+            }
+        }
+
+    }
+
+
 
 
 
