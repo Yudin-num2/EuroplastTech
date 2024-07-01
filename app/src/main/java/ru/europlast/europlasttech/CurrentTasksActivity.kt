@@ -34,7 +34,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,8 +45,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -58,7 +55,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -66,14 +62,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.europlast.europlasttech.data.CurrentTask
 import ru.europlast.europlasttech.data.NetworkInterface
-import ru.europlast.europlasttech.ui.theme.Black
 import ru.europlast.europlasttech.ui.theme.EvpCyan
 import ru.europlast.europlasttech.ui.theme.SaveAndExitBtn
 import ru.europlast.europlasttech.ui.theme.SaveAndExitBtnBorder
@@ -96,7 +86,7 @@ fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterfac
         try {
             val response = networkAPI.getCurrentTasks()
             if (response.isSuccessful) {
-                tasksList.value = response.body()?: emptyList()
+                tasksList.value = response.body() ?: emptyList()
             } else {
                 Log.e("CurrentTasksScreen", "Error: ${response.errorBody()}")
             }
@@ -218,6 +208,7 @@ fun CurrentTaskCard(task: CurrentTask) {
         }
     }
     if (isDialogVisible) {
+        Log.d("CurrentTaskClicked", "$task")
         FullCardInfo(task, onDismiss = { isDialogVisible = false })
     }
 }
@@ -333,7 +324,7 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit) {
                     ) {
 
                         Text(
-                            text = stringResource(id = ru.europlast.europlasttech.R.string.status),
+                            text = stringResource(R.string.status),
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
@@ -360,21 +351,7 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit) {
                     ) {
 
                         Text(
-                            text = when (choisenCard.status) {
-                                stringResource(ru.europlast.europlasttech.R.string.in_progress_status) ->
-                                    stringResource(ru.europlast.europlasttech.R.string.in_progress_date)
-
-                                stringResource(ru.europlast.europlasttech.R.string.completed_status) ->
-                                    stringResource(ru.europlast.europlasttech.R.string.completed_date)
-
-                                stringResource(ru.europlast.europlasttech.R.string.canceled_status) ->
-                                    stringResource(ru.europlast.europlasttech.R.string.canceled_date)
-
-                                stringResource(ru.europlast.europlasttech.R.string.created_status) ->
-                                    stringResource(ru.europlast.europlasttech.R.string.created_date)
-
-                                else -> stringResource(ru.europlast.europlasttech.R.string.unknown)
-                            },
+                            text = stringResource(R.string.task_date),
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
@@ -385,7 +362,7 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit) {
                         )
                     }
                     Text(
-                        text = choisenCard.createTime,
+                        text = choisenCard.createtime,
                         style = TextStyle(
                             fontSize = 15.sp,
                             fontStyle = FontStyle.Italic,
@@ -403,7 +380,7 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit) {
                     ) {
 
                         Text(
-                            text = stringResource(id = ru.europlast.europlasttech.R.string.author),
+                            text = stringResource(R.string.author),
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
@@ -420,52 +397,39 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit) {
                         ),
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
-                    if (choisenCard.status != stringResource(ru.europlast.europlasttech.R.string.completed_status) &&
-                        choisenCard.status != stringResource(ru.europlast.europlasttech.R.string.canceled_status)
+                    Button(
+                        onClick = { changeStatusCode = true },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                            .zIndex(1f)
+                            .border(
+                                2.dp, color = SaveAndExitBtnBorder,
+                                shape = RoundedCornerShape(20.dp)
+                            ),
+                        colors = ButtonDefaults.buttonColors(SaveAndExitBtn)
                     ) {
-                        Button(
-                            onClick = { changeStatusCode = true },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(50.dp)
-                                .zIndex(1f)
-                                .border(
-                                    2.dp, color = SaveAndExitBtnBorder,
-                                    shape = RoundedCornerShape(20.dp)
-                                ),
-                            colors = ButtonDefaults.buttonColors(SaveAndExitBtn)
-                        ) {
-                            Text(
-                                text = when (choisenCard.status) {
-                                    stringResource(ru.europlast.europlasttech.R.string.in_progress_status) ->
-                                        stringResource(ru.europlast.europlasttech.R.string.change_status)
-
-                                    stringResource(ru.europlast.europlasttech.R.string.created_status) ->
-                                        stringResource(ru.europlast.europlasttech.R.string.get_to_work)
-
-                                    else -> {
-                                        stringResource(ru.europlast.europlasttech.R.string.unknown)
-                                    }
-                                },
-                                style = TextStyle(
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black,
-                                    textAlign = TextAlign.Center
-                                )
+                        Text(
+                            text = stringResource(R.string.change_status_code),
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black,
+                                textAlign = TextAlign.Center
                             )
+                        )
 
-                        }
-                        if (changeStatusCode) {
-                            ChangeStatus(onDismiss = { changeStatusCode = false })
-                        }
                     }
-
+                    if (changeStatusCode) {
+                        ChangeStatus(onDismiss = { changeStatusCode = false })
+                    }
                 }
+
             }
         }
     }
 }
+
 
 @Composable
 fun ChangeStatus(onDismiss: () -> Unit) {

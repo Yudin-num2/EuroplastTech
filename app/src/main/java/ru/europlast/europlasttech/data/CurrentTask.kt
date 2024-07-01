@@ -2,15 +2,15 @@ package ru.europlast.europlasttech.data
 
 data class CurrentTask(
     val id: Int = 0,
-    val task: String = "Пусто",
-    val workers: List<String> = listOf("Пусто"),
-    val status: String = "Пусто",
-    val techCard: String = "Пусто",
-    val pathToPhoto: String = "Пусто",
-    val createTime: String = "Пусто",
-    val author: String = "Пусто",
-    val spentRepairParts: List<String> = listOf("Пусто"),
-)
+    val task: String,
+    val workers: List<String>,
+    val status: String,
+    val techcard: String?,
+    val pathtophoto: String,
+    val createtime: String,
+    val author: String,
+    val spentrepairparts: List<String>?,
+    )
 
 
 

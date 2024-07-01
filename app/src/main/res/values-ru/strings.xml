@@ -33,14 +33,11 @@
     <string name="completed_status">Выполнена</string>
     <string name="canceled_status">Отменена</string>
     <string name="created_status">Создана</string>
-    <string name="in_progress_date">Дата и время начала работ</string>
-    <string name="completed_date">Дата и время окончания работ</string>
-    <string name="canceled_date">Дата и время отмены</string>
-    <string name="created_date">Дата и время создания</string>
     <string name="unknown">Неизвестно</string>
     <string name="author">Автор</string>
     <string name="canceled">Отменить</string>
     <string name="completed">Выполнено</string>
+    <string name="task_date">Дата и время</string>
     <string name="change_status">Сменить статус</string>
     <string name="get_to_work">Взять в работу</string>
     <string name="get_image_from">Откуда брать фото?</string>
@@ -51,4 +48,5 @@
     <string name="machine_stop_switch">Дефект вызвал останов\nвсей машины?</string>
     <string name="enter_element">Введите отказавший элемент</string>
     <string name="check_your_credentials">Неверный логин или пароль</string>
+    <string name="change_status_code">Сменить статус</string>
 </resources>
