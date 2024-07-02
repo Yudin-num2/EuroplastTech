@@ -1,20 +1,17 @@
 package ru.europlast.europlasttech
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,14 +24,10 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,25 +47,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.europlast.europlasttech.data.NetworkInterface
-import ru.europlast.europlasttech.data.User
 import ru.europlast.europlasttech.ui.theme.EvpCyan
-import ru.europlast.europlasttech.ui.theme.ThumbChecked
-import ru.europlast.europlasttech.ui.theme.ThumbUnchecked
-import ru.europlast.europlasttech.ui.theme.TrackChecked
-import ru.europlast.europlasttech.ui.theme.TrackUnchecked
 import ru.europlast.europlasttech.ui.theme.WhiteTransparent
 import java.net.ConnectException
 
@@ -90,7 +73,6 @@ class LoginActivity : ComponentActivity() {
 @Composable
 fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val isAuthSuccessfull by remember { mutableStateOf(true) }
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current

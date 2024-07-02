@@ -1,7 +1,9 @@
 package ru.europlast.europlasttech.data
 
+import java.util.UUID
+
 data class CurrentTask(
-    val id: Int = 0,
+    val id: UUID,
     val task: String,
     val workers: List<String>,
     val status: String,
