@@ -1,7 +1,9 @@
 package ru.europlast.europlasttech
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,6 +26,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
@@ -36,6 +39,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -62,6 +67,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.europlast.europlasttech.data.CurrentTask
 import ru.europlast.europlasttech.data.NetworkInterface
 import ru.europlast.europlasttech.ui.theme.EvpCyan
@@ -82,18 +91,7 @@ class CurrentTasksActivity : ComponentActivity() {
 fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterface) {
     val tasksList = remember { mutableStateOf<List<CurrentTask>>(emptyList()) }
 
-    LaunchedEffect(Unit) {
-        try {
-            val response = networkAPI.getCurrentTasks()
-            if (response.isSuccessful) {
-                tasksList.value = response.body() ?: emptyList()
-            } else {
-                Log.e("CurrentTasksScreen", "Error: ${response.errorBody()}")
-            }
-        } catch (e: Exception) {
-            Log.e("CurrentTasksScreen", "Error updating task list: ${e.message}")
-        }
-    }
+    updateTaskList(tasksList, networkAPI)
 
     Box(
         modifier = Modifier
@@ -111,7 +109,6 @@ fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterfac
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-//            .height(40.dp)
                 .padding(15.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -121,7 +118,7 @@ fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterfac
                 contentDescription = "return Icon",
                 tint = Color.Black,
                 modifier = Modifier
-                    .padding(top = 15.dp, end = 15.dp)
+                    .padding(top = 15.dp, start = 15.dp)
                     .width(30.dp)
                     .height(30.dp)
                     .clickable {
@@ -137,12 +134,22 @@ fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterfac
                 contentDescription = "close Dialog Icon",
                 tint = Color.Green,
                 modifier = Modifier
+                    .padding(top = 15.dp)
+                    .width(30.dp)
+                    .height(30.dp)
+                    .clickable { updateTaskList(tasksList, networkAPI) }
+                    .zIndex(1f),
+                )
+            Icon(
+                imageVector = Icons.Filled.Info,
+                contentDescription = "Colors info",
+                tint = Color.Black,
+                modifier = Modifier
                     .padding(top = 15.dp, end = 15.dp)
                     .width(30.dp)
                     .height(30.dp)
                     .clickable { /* TODO */ }
                     .zIndex(1f),
-
                 )
         }
         LazyColumn(
@@ -152,16 +159,29 @@ fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterfac
                 .zIndex(2f),
         ) {
             itemsIndexed(tasksList.value) { _, item ->
-                CurrentTaskCard(task = item)
+                CurrentTaskCard(task = item, networkAPI)
             }
         }
     }
 }
 
-
+fun updateTaskList(tasksList: MutableState<List<CurrentTask>>, networkAPI: NetworkInterface){
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val response = networkAPI.getCurrentTasks()
+            if (response.isSuccessful) {
+                tasksList.value = response.body() ?: emptyList()
+            } else {
+                Log.e("CurrentTasksScreen", "Error: ${response.errorBody()}")
+            }
+        } catch (e: Exception) {
+            Log.e("CurrentTasksScreen", "Error updating task list: ${e.message}")
+        }
+    }
+}
 @Composable
 //@Preview
-fun CurrentTaskCard(task: CurrentTask) {
+fun CurrentTaskCard(task: CurrentTask, networkAPI: NetworkInterface) {
     val textColor by remember { mutableStateOf(Color.Black) }
     var isDialogVisible by remember { mutableStateOf(false) }
     val statusColor = when (task.status) {
@@ -209,16 +229,21 @@ fun CurrentTaskCard(task: CurrentTask) {
     }
     if (isDialogVisible) {
         Log.d("CurrentTaskClicked", "$task")
-        FullCardInfo(task, onDismiss = { isDialogVisible = false })
+        FullCardInfo(task, onDismiss = { isDialogVisible = false }, networkAPI)
     }
 }
 
+
 @Composable
-fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit) {
+fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit, networkAPI: NetworkInterface) {
     var changeStatusCode by remember { mutableStateOf(false) }
+    var statusText by remember { mutableStateOf(choisenCard.status) }
+    val context = LocalContext.current
+    val successChangeStatus = stringResource(R.string.success_change_status)
+
 
     Dialog(
-        onDismissRequest = { },
+        onDismissRequest = { onDismiss() },
         properties = DialogProperties(dismissOnClickOutside = true)
     ) {
         Surface(
@@ -248,92 +273,69 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit) {
                         .padding(top = 15.dp, start = 15.dp)
                         .width(30.dp)
                         .height(30.dp)
-                        .clickable { /*TODO request on server*/
+                        .clickable {
+                            onUpdateStatusClick(
+                                choisenCard, networkAPI,
+                                statusText, context, successChangeStatus
+                            )
                             onDismiss()
                         }
                         .zIndex(1f)
                         .align(Alignment.TopStart),
                 )
-                Column(modifier = Modifier.padding(20.dp)) {
+            }
+            Column(modifier = Modifier.padding(20.dp)) {
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(top = 30.dp),
-                            text = choisenCard.task,
-                            textAlign = TextAlign.Start,
-                            style = TextStyle(
-                                fontSize = 22.sp,
-                                fontFamily = FontFamily.Default,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
-                            )
-                        )
-
-                    }
-                    Image(
-                        painter = rememberAsyncImagePainter(
-                            model = "https://avatars.mds.yandex.net/i?id=0aef40c429ff11a449a8329ef6de247211b6b28a-12512933-images-thumbs&n=13"
-                        ),
-                        contentDescription = "Task picture",
-                        modifier = Modifier
-                            .height(200.dp)
-                            .width(200.dp)
-                            .align(Alignment.CenterHorizontally),
-                        contentScale = ContentScale.Fit,
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
-                            .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
-                            .padding(3.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-
-                        Text(
-                            text = stringResource(id = ru.europlast.europlasttech.R.string.workers),
-                            style = TextStyle(
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                            )
-                        )
-                    }
-                    choisenCard.workers.forEachIndexed() { index, worker ->
-                        Text(
-                            text = "${index + 1}. $worker",
-                            style = TextStyle(
-                                fontSize = 15.sp,
-                                fontStyle = FontStyle.Italic,
-                                color = Color.Black
-                            ),
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
-                            .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
-                            .padding(3.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-
-                        Text(
-                            text = stringResource(R.string.status),
-                            style = TextStyle(
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                            )
-                        )
-                    }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        text = choisenCard.status,
+                        modifier = Modifier.padding(top = 30.dp),
+                        text = choisenCard.task,
+                        textAlign = TextAlign.Start,
+                        style = TextStyle(
+                            fontSize = 22.sp,
+                            fontFamily = FontFamily.Default,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                    )
+
+                }
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model = "https://avatars.mds.yandex.net/i?id=0aef40c429ff11a449a8329ef6de247211b6b28a-12512933-images-thumbs&n=13"
+                    ),
+                    contentDescription = "Task picture",
+                    modifier = Modifier
+                        .height(200.dp)
+                        .width(200.dp)
+                        .align(Alignment.CenterHorizontally),
+                    contentScale = ContentScale.Fit,
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
+                        .padding(3.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    Text(
+                        text = stringResource(id = ru.europlast.europlasttech.R.string.workers),
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                        )
+                    )
+                }
+                choisenCard.workers.forEachIndexed() { index, worker ->
+                    Text(
+                        text = "${index + 1}. $worker",
                         style = TextStyle(
                             fontSize = 15.sp,
                             fontStyle = FontStyle.Italic,
@@ -341,98 +343,156 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit) {
                         ),
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
-                            .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
-                            .padding(3.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
+                        .padding(3.dp),
+                    contentAlignment = Alignment.Center
+                ) {
 
-                        Text(
-                            text = stringResource(R.string.task_date),
-                            style = TextStyle(
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                            ),
-                            modifier = Modifier.padding(horizontal = 15.dp),
+                    Text(
+                        text = stringResource(R.string.status),
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                        )
+                    )
+                }
+                Text(
+                    text = statusText,
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.Black
+                    ),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
+                        .padding(3.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    Text(
+                        text = stringResource(R.string.task_date),
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                        ),
+                        modifier = Modifier.padding(horizontal = 15.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Text(
+                    text = choisenCard.createtime,
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.Black
+                    ),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
+                        .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
+                        .padding(3.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    Text(
+                        text = stringResource(R.string.author),
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                        )
+                    )
+                }
+                Text(
+                    text = choisenCard.author,
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.Black
+                    ),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                Button(
+                    onClick = { changeStatusCode = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .zIndex(1f)
+                        .border(
+                            2.dp, color = SaveAndExitBtnBorder,
+                            shape = RoundedCornerShape(20.dp)
+                        ),
+                    colors = ButtonDefaults.buttonColors(SaveAndExitBtn)
+                ) {
+                    Text(
+                        text = stringResource(R.string.change_status_code),
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
                             textAlign = TextAlign.Center
                         )
-                    }
-                    Text(
-                        text = choisenCard.createtime,
-                        style = TextStyle(
-                            fontSize = 15.sp,
-                            fontStyle = FontStyle.Italic,
-                            color = Color.Black
-                        ),
-                        modifier = Modifier.padding(vertical = 8.dp)
                     )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(color = Color.Cyan, shape = RoundedCornerShape(9.dp))
-                            .border(2.dp, color = EvpCyan, shape = RoundedCornerShape(9.dp))
-                            .padding(3.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
 
-                        Text(
-                            text = stringResource(R.string.author),
-                            style = TextStyle(
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                            )
-                        )
-                    }
-                    Text(
-                        text = choisenCard.author,
-                        style = TextStyle(
-                            fontSize = 15.sp,
-                            fontStyle = FontStyle.Italic,
-                            color = Color.Black
-                        ),
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                    Button(
-                        onClick = { changeStatusCode = true },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .zIndex(1f)
-                            .border(
-                                2.dp, color = SaveAndExitBtnBorder,
-                                shape = RoundedCornerShape(20.dp)
-                            ),
-                        colors = ButtonDefaults.buttonColors(SaveAndExitBtn)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.change_status_code),
-                            style = TextStyle(
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                                textAlign = TextAlign.Center
-                            )
-                        )
-
-                    }
-                    if (changeStatusCode) {
-                        ChangeStatus(onDismiss = { changeStatusCode = false })
-                    }
                 }
-
+                if (changeStatusCode) {
+                    ChangeStatus(onDismiss = { changeStatusCode = false },
+                        onStatusSelected = { status ->
+                            statusText = status
+                            changeStatusCode = false
+                        })
+                }
             }
+
+        }
+    }
+}
+
+
+fun onUpdateStatusClick(
+    choisenCard: CurrentTask, networkAPI: NetworkInterface,
+    statusText: String, context: Context, successChangeStatus: String
+) {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            Log.d("[VALUES IN RESPONSE]", "${choisenCard.id}, $statusText")
+            val response = networkAPI.updateTaskStatus(
+                taskId = choisenCard.id, status = statusText
+            )
+            if (response.isSuccessful) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context, successChangeStatus,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else {
+                Log.e("TaskScreen", "Error: ${response.errorBody()}")
+            }
+        } catch (e: Exception) {
+            Log.e("TaskScreen", "Error updating task status: ${e.message}")
         }
     }
 }
 
 
 @Composable
-fun ChangeStatus(onDismiss: () -> Unit) {
+fun ChangeStatus(onDismiss: () -> Unit, onStatusSelected: (String) -> Unit) {
     Dialog(
         onDismissRequest = { onDismiss() },
         properties = DialogProperties(dismissOnClickOutside = true)
@@ -463,10 +523,7 @@ fun ChangeStatus(onDismiss: () -> Unit) {
                     Spacer(modifier = Modifier.padding(20.dp))
                     Row() {
                         Button(
-                            onClick = {
-                                onDismiss()
-                                /*TODO (обработка смены статуса)*/
-                            },
+                            onClick = { onStatusSelected("В работе") },
                             modifier = Modifier
                                 .shadow(5.dp, shape = RoundedCornerShape(30.dp))
                                 .padding(horizontal = 4.dp)
@@ -475,7 +532,7 @@ fun ChangeStatus(onDismiss: () -> Unit) {
                             colors = ButtonDefaults.buttonColors(Color.Yellow)
                         ) {
                             Text(
-                                text = stringResource(id = R.string.in_progress_status),
+                                text = "В работе",
                                 textAlign = TextAlign.Center,
                                 color = Color.Black
                             )
@@ -484,10 +541,7 @@ fun ChangeStatus(onDismiss: () -> Unit) {
                     }
                     Row(modifier = Modifier.padding(vertical = 10.dp)) {
                         Button(
-                            onClick = {
-                                onDismiss()
-                                /*TODO (обработка смены статуса)*/
-                            },
+                            onClick = { onStatusSelected("Отменена") },
                             modifier = Modifier
                                 .shadow(5.dp, shape = RoundedCornerShape(30.dp))
                                 .padding(horizontal = 4.dp)
@@ -496,7 +550,7 @@ fun ChangeStatus(onDismiss: () -> Unit) {
                             colors = ButtonDefaults.buttonColors(Color.Gray)
                         ) {
                             Text(
-                                text = stringResource(id = R.string.canceled_status),
+                                text = "Отменена",
                                 textAlign = TextAlign.Center,
                                 color = Color.Black
                             )
@@ -505,10 +559,7 @@ fun ChangeStatus(onDismiss: () -> Unit) {
                     }
                     Row() {
                         Button(
-                            onClick = {
-                                onDismiss()
-                                /*TODO (обработка смены статуса)*/
-                            },
+                            onClick = { onStatusSelected("Выполнено") },
                             modifier = Modifier
                                 .shadow(5.dp, shape = RoundedCornerShape(30.dp))
                                 .padding(horizontal = 4.dp)
@@ -517,7 +568,7 @@ fun ChangeStatus(onDismiss: () -> Unit) {
                             colors = ButtonDefaults.buttonColors(Color.Green)
                         ) {
                             Text(
-                                text = stringResource(id = R.string.completed_status),
+                                text = "Выполнено",
                                 textAlign = TextAlign.Center,
                                 color = Color.Black
                             )

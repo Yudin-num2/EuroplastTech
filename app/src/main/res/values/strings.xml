@@ -69,4 +69,6 @@ You can change the permissions in the system settings</string>
     <string name="check_your_credentials">Invalid login or password</string>
     <string name="change_status_code">Change status</string>
 
+    <string name="success_change_status">The status has been successfully updated. Click on "update"</string>
+
 </resources>
