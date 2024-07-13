@@ -204,23 +204,23 @@ fun onAuthClick(navController: NavController, networkAPI: NetworkInterface,
             navController.navigate(Screens.MainScreen.route) {
                 popUpTo("login") { inclusive = true }
             }
-        }
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response = networkAPI.authorization(
-                    login = login, password = password
-                )
-                if (response.isSuccessful) {
-                    val authResponse = response.body().toString()
-                    println(authResponse)
-                    if (authResponse == "{\"details\": \"user not found\"}") {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.check_your_credentials),
-                                Toast.LENGTH_SHORT).show()
-                        }
-                    }else {
+        }else{
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val response = networkAPI.authorization(
+                        login = login, password = password
+                    )
+                    if (response.isSuccessful) {
+                        val authResponse = response.body().toString()
+                        println(authResponse)
+                        if (authResponse == "{\"details\": \"user not found\"}") {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.check_your_credentials),
+                                    Toast.LENGTH_SHORT).show()
+                            }
+                        }else {
 
 //                        val user = User(
 //                            id = authResponse[0].code,
@@ -231,22 +231,24 @@ fun onAuthClick(navController: NavController, networkAPI: NetworkInterface,
 //                            room = authResponse[5].toString(),
 //                            post = authResponse[6].toString()
 //                        )
-                        withContext(Dispatchers.Main) {
-                            navController.navigate(Screens.MainScreen.route) {
-                                popUpTo("login") { inclusive = true }
+                            withContext(Dispatchers.Main) {
+                                navController.navigate(Screens.MainScreen.route) {
+                                    popUpTo("login") { inclusive = true }
+                                }
                             }
                         }
+                    } else {
+                        Toast.makeText(context,
+                            "Response is not successful",
+                            Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    Toast.makeText(context,
-                        "Response is not successful",
-                        Toast.LENGTH_SHORT).show()
+                } catch (error: ConnectException) {
+                    Log.d("ConnectException", "Error: $error")
+                } catch (error: Exception) {
+                    Log.d("Exception", "Error: $error")
                 }
-            } catch (error: ConnectException) {
-                Log.d("ConnectException", "Error: $error")
-            } catch (error: Exception) {
-                Log.d("Exception", "Error: $error")
             }
+
         }
 
     }

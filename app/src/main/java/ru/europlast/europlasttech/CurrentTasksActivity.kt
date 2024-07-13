@@ -90,8 +90,35 @@ class CurrentTasksActivity : ComponentActivity() {
 @Composable
 fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterface) {
     val tasksList = remember { mutableStateOf<List<CurrentTask>>(emptyList()) }
+    var isInfoVisible by remember{ mutableStateOf(false) }
 
-    updateTaskList(tasksList, networkAPI)
+    LaunchedEffect(Unit) {
+        updateTaskList(tasksList, networkAPI)
+    }
+//    val tasksList = listOf(
+//        CurrentTask(
+//            id = UUID.randomUUID(),
+//            task = "TO-3 | Telerobot 1",
+//            workers = listOf("Worker 1", "Worker 2"),
+//            status = "В работе",
+//            techcard = "TO-3",
+//            pathtophoto = "path",
+//            createtime = "01-01-01 20:01:10.99338",
+//            author = "Me",
+//            spentrepairparts = listOf("Zaxvat L", "Zaxvat R")
+//
+//        ), CurrentTask(
+//            id = UUID.randomUUID(),
+//            task = "TO-2 | Telerobot 2",
+//            workers = listOf("Worker 1", "Worker 2"),
+//            status = "В работе",
+//            techcard = "TO-2",
+//            pathtophoto = "path",
+//            createtime = "01-01-01 20:01:10.99338",
+//            author = "Me",
+//            spentrepairparts = listOf("Zaxvat L", "Zaxvat R")
+//
+//        ))
 
     Box(
         modifier = Modifier
@@ -131,7 +158,7 @@ fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterfac
                 )
             Icon(
                 imageVector = Icons.Filled.Refresh,
-                contentDescription = "close Dialog Icon",
+                contentDescription = "update tasks Icon",
                 tint = Color.Green,
                 modifier = Modifier
                     .padding(top = 15.dp)
@@ -142,13 +169,13 @@ fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterfac
                 )
             Icon(
                 imageVector = Icons.Filled.Info,
-                contentDescription = "Colors info",
+                contentDescription = "Task status info",
                 tint = Color.Black,
                 modifier = Modifier
                     .padding(top = 15.dp, end = 15.dp)
                     .width(30.dp)
                     .height(30.dp)
-                    .clickable { /* TODO */ }
+                    .clickable { isInfoVisible = true }
                     .zIndex(1f),
                 )
         }
@@ -159,10 +186,11 @@ fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterfac
                 .zIndex(2f),
         ) {
             itemsIndexed(tasksList.value) { _, item ->
-                CurrentTaskCard(task = item, networkAPI)
+                CurrentTaskCard(task = item, networkAPI, navController)
             }
         }
     }
+    if (isInfoVisible) { InfoDialog(onDismiss = {isInfoVisible = false}) }
 }
 
 fun updateTaskList(tasksList: MutableState<List<CurrentTask>>, networkAPI: NetworkInterface){
@@ -180,8 +208,9 @@ fun updateTaskList(tasksList: MutableState<List<CurrentTask>>, networkAPI: Netwo
     }
 }
 @Composable
-//@Preview
-fun CurrentTaskCard(task: CurrentTask, networkAPI: NetworkInterface) {
+fun CurrentTaskCard(task: CurrentTask,
+                    networkAPI: NetworkInterface,
+                    navController: NavController) {
     val textColor by remember { mutableStateOf(Color.Black) }
     var isDialogVisible by remember { mutableStateOf(false) }
     val statusColor = when (task.status) {
@@ -227,9 +256,35 @@ fun CurrentTaskCard(task: CurrentTask, networkAPI: NetworkInterface) {
             )
         }
     }
+    val context = LocalContext.current
+    var isToastVisible by remember { mutableStateOf(false) }
+
     if (isDialogVisible) {
-        Log.d("CurrentTaskClicked", "$task")
-        FullCardInfo(task, onDismiss = { isDialogVisible = false }, networkAPI)
+        if("ТО" in task.task && task.status == "В работе"){ /* ТО на русском */
+            LaunchedEffect(Unit) {
+                try{
+                    val response = task.techcard?.let { networkAPI.getTechCard(it) }
+                    if (response?.body() == null){
+                        isToastVisible = true
+                    }
+                    else{
+                        Log.d("[CurrentTasksRunTECHCARD]",
+                            "Navigating to CheckListScreen with techCard: ${task.techcard}")
+                        navController.navigate("checklist_screen/${task.techcard}")
+                    }
+                }
+                catch (e: Exception){
+                    Log.d("CheckListScreen|LaunchedEffect", "Error: ${e.message}")
+                }
+            }
+
+        } else {
+            FullCardInfo(task, onDismiss = { isDialogVisible = false }, networkAPI)
+        }
+    }
+    if (isToastVisible){
+        Toast.makeText(context, "Техническая карта не найдена", Toast.LENGTH_LONG).show()
+        isToastVisible = false
     }
 }
 
@@ -251,7 +306,7 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit, networkAPI: Ne
             color = Color.White
         ) {
             Box(
-                contentAlignment = Alignment.TopCenter
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
@@ -325,7 +380,7 @@ fun FullCardInfo(choisenCard: CurrentTask, onDismiss: () -> Unit, networkAPI: Ne
                 ) {
 
                     Text(
-                        text = stringResource(id = ru.europlast.europlasttech.R.string.workers),
+                        text = stringResource(R.string.workers),
                         style = TextStyle(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
@@ -578,6 +633,87 @@ fun ChangeStatus(onDismiss: () -> Unit, onStatusSelected: (String) -> Unit) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun InfoDialog(onDismiss: () -> Unit){
+
+    Dialog(
+        onDismissRequest = { /*onDismiss()*/ },
+        properties = DialogProperties(dismissOnClickOutside = true)
+    ) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = Color.White
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "close Dialog",
+                    tint = colorResource(android.R.color.darker_gray),
+                    modifier = Modifier
+                        .padding(top = 15.dp, end = 15.dp)
+                        .width(30.dp)
+                        .height(30.dp)
+                        .clickable { onDismiss() }
+                        .zIndex(1f)
+                        .align(Alignment.TopEnd),
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(vertical = 60.dp, horizontal = 10.dp)
+                        .fillMaxWidth()
+                        .height(120.dp),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically){
+                        Box(modifier = Modifier
+                            .shadow(10.dp, shape = RoundedCornerShape(25.dp))
+                            .width(50.dp)
+                            .height(50.dp)
+                            .background(Color.Yellow)
+                        )
+                        Text(
+                            modifier = Modifier.padding(horizontal = 20.dp),
+                            text = stringResource(R.string.in_progress_status),
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                        )
+                    }
+                    Row(modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically){
+                        Box(modifier = Modifier
+                            .shadow(10.dp, shape = RoundedCornerShape(25.dp))
+                            .width(50.dp)
+                            .height(50.dp)
+                            .background(Color.Red)
+                        )
+                        Text(
+                            modifier = Modifier.padding(horizontal = 20.dp),
+                            text = stringResource(R.string.created_status),
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                        )
+                    }
+
+
+                }
+            }
+        }
+
     }
 }
 

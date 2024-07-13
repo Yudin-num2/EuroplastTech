@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -28,12 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.text.style.TextAlign
 import ru.europlast.europlasttech.R
-import ru.europlast.europlasttech.ui.theme.goodSocket
 
 
 @Composable
@@ -122,8 +120,3 @@ fun ReasonsPopupForSockets(onDismiss: () -> Unit,
     }
 }
 
-//@Composable
-//@Preview
-//fun ReasonsPopupForSocketsPreview() {
-//    ReasonsPopupForSockets()
-//}

@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -14,10 +15,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +32,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
@@ -48,8 +45,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -72,12 +67,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavController
 import ru.europlast.europlasttech.ui.theme.SaveAndExitBtn
 import ru.europlast.europlasttech.ui.theme.SaveAndExitBtnBorder
@@ -435,14 +428,12 @@ fun AddDefectScreen(navController: NavController) {
         }
 
     }
-
     LaunchedEffect(showCameraPermissionDeniedSnackbar) {
         if (showCameraPermissionDeniedSnackbar) {
-            snackbarHostState.showSnackbar(
-                message = context.getString(R.string.snackbar_dont_get_permisson_camera),
-                duration = SnackbarDuration.Long,
-                actionLabel = "OK"
-            )
+            Toast.makeText(
+                context,
+                context.getString(R.string.snackbar_dont_get_permisson_camera),
+                Toast.LENGTH_LONG).show()
             showCameraPermissionDeniedSnackbar = false
         }
     }
