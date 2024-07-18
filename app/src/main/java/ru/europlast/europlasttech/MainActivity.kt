@@ -1,6 +1,7 @@
 package ru.europlast.europlasttech
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -77,7 +80,9 @@ fun MainScreen(navController: NavController = rememberNavController()
             painter = painterResource(id = R.drawable.ic_background_img),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize().zIndex(-1f)
+            modifier = Modifier
+                .fillMaxSize()
+                .zIndex(-1f)
         )
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row {
@@ -170,6 +175,12 @@ fun CustomDialog(
     onDismiss:() -> Unit,
     navController: NavController,
 ) {
+    val machines = mutableListOf(
+        "Telerobot 1", "Telerobot 2", "Telerobot 3",
+        "Telerobot 4", "Telerobot 5", "Telerobot 6",
+        "Telerobot 7", "Husky 11", "Husky 12",
+         "Husky 16", "Husky 22", "HeliCap",
+    )
     Dialog(
         onDismissRequest = {
             onDismiss()
@@ -181,7 +192,9 @@ fun CustomDialog(
         Card(
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
-                .border(1.dp, color = Color.Black, shape = RoundedCornerShape(15.dp)),
+                .padding(10.dp)
+                .border(1.dp, color = Color.Black, shape = RoundedCornerShape(15.dp))
+                .height(530.dp),
         ) {
 
             Column(
@@ -228,127 +241,34 @@ fun CustomDialog(
                     )
                 }
 
-                Button(
-                    onClick = {
-                        navController.navigate(Screens.SocketsT01Screen.route) },
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .padding(top = 20.dp),
-                    elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.buttonColors(Color.Gray),
-                ) {
-                    Text(text = "Telerobot 1",
-                        style = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 26.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    )
-                }
-                Button(
-                    onClick = { navController.navigate(
-                        Screens.SocketsT02_7_Screen.route.replace(
-                            "{machine_name}", "Telerobot 2")) },
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f),
-                    elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.buttonColors(Color.Gray),
-                ) {
-                    Text(text = "Telerobot 2",
-                        style = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 26.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ))
-                }
-                Button(
-                    onClick = { navController.navigate(
-                        Screens.SocketsT02_7_Screen.route.replace(
-                            "{machine_name}", "Telerobot 3")) },
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f),
-                    elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.buttonColors(Color.Gray),
-                ) {
-                    Text(text = "Telerobot 3",
-                        style = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 26.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ))
-                }
-                Button(
-                    onClick = { navController.navigate(
-                        Screens.SocketsT02_7_Screen.route.replace(
-                            "{machine_name}", "Telerobot 4")) },
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f),
-                    elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.buttonColors(Color.Gray),
-                ) {
-                    Text(text = "Telerobot 4",
-                        style = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 26.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ))
-                }
-                Button(
-                    onClick = { navController.navigate(
-                        Screens.SocketsT02_7_Screen.route.replace(
-                            "{machine_name}", "Telerobot 5")) },
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f),
-                    elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.buttonColors(Color.Gray),
-                ) {
-                    Text(text = "Telerobot 5",
-                        style = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 26.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ))
-                }
-                Button(
-                    onClick = { navController.navigate(
-                        Screens.SocketsT02_7_Screen.route.replace(
-                            "{machine_name}", "Telerobot 6")) },
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f),
-                    elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.buttonColors(Color.Gray),
-                ) {
-                    Text(text = "Telerobot 6",
-                        style = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 26.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ))
-                }
-                Button(
-                    onClick = { navController.navigate(
-                        Screens.SocketsT02_7_Screen.route.replace(
-                            "{machine_name}", "Telerobot 7")) },
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .padding(bottom = 20.dp),
-                    elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.buttonColors(Color.Gray),
-                ) {
-                    Text(text = "Telerobot 7",
-                        style = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 26.sp,
-                            color = MaterialTheme.colorScheme.onSurface
+                LazyColumn {
+                    items(machines){machineName ->
+                        Button(
+                            onClick = {
+                                if(machineName == "Telerobot 1"){
 
-                        ))
+                                    navController.navigate(Screens.SocketsT01Screen.route)
+                                }else if(machineName.contains("Husky")){
+                                    navController.navigate(Screens.SocketsHusky.route)
+                                }else{ navController.navigate(
+                                Screens.SocketsT02_7_Screen.route.replace(
+                                    "{machine_name}", machineName)) }},
+                            modifier = Modifier
+                                .fillMaxWidth(0.9f)
+                                .padding(bottom = 20.dp),
+                            elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
+                            shape = RoundedCornerShape(20.dp),
+                            colors = ButtonDefaults.buttonColors(Color.Gray),
+                        ) {
+                            Text(text = machineName,
+                                style = TextStyle(
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 26.sp,
+                                    color = MaterialTheme.colorScheme.onSurface
+
+                                ))
+                        }
+                    }
                 }
             }
         }

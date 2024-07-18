@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
@@ -141,7 +142,7 @@ fun CurrentTasksScreen(navController: NavController, networkAPI: NetworkInterfac
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                imageVector = Icons.Filled.KeyboardArrowLeft,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "return Icon",
                 tint = Color.Black,
                 modifier = Modifier
@@ -525,7 +526,6 @@ fun onUpdateStatusClick(
 ) {
     CoroutineScope(Dispatchers.IO).launch {
         try {
-            Log.d("[VALUES IN RESPONSE]", "${choisenCard.id}, $statusText")
             val response = networkAPI.updateTaskStatus(
                 taskId = choisenCard.id, status = statusText
             )
@@ -637,10 +637,10 @@ fun ChangeStatus(onDismiss: () -> Unit, onStatusSelected: (String) -> Unit) {
 }
 
 @Composable
-fun InfoDialog(onDismiss: () -> Unit){
+private fun InfoDialog(onDismiss: () -> Unit){
 
     Dialog(
-        onDismissRequest = { /*onDismiss()*/ },
+        onDismissRequest = { onDismiss() },
         properties = DialogProperties(dismissOnClickOutside = true)
     ) {
         Surface(

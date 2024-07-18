@@ -39,17 +39,17 @@ fun ReasonsPopupForSockets(onDismiss: () -> Unit,
                            onColorSelected: (Color) -> Unit) {
 
     val listOfReasons = mutableListOf(
-        R.string.good_socket to colorResource(R.color.good_socket),
-        R.string.underfilling to colorResource(R.color.underfilling),
-        R.string.dirt to colorResource(R.color.dirt),
-        R.string.needle_chipping to colorResource(R.color.needle_chipping),
-        R.string.flash_by_closure to colorResource(R.color.flash_by_closure),
-        R.string.crack to colorResource(R.color.crack),
-        R.string.hole to colorResource(R.color.hole),
-        R.string.gate_valve to colorResource(R.color.gate_valve),
-        R.string.not_warm to colorResource(R.color.not_warm),
-        R.string.geometry to colorResource(R.color.geometry),
-        R.string.water to colorResource(R.color.water),
+        R.string.good_socket to Color(0xFF37FF00),
+        R.string.underfilling to Color(0xFF1C71D8),
+        R.string.dirt to Color(0xFFAC7E64),
+        R.string.needle_chipping to Color(0xFF7641D1),
+        R.string.flash_by_closure to Color(0xFFA0A71B),
+        R.string.crack to Color(0xFFFF29EC),
+        R.string.hole to Color(0xFFE01B24),
+        R.string.gate_valve to Color(0xFFC0FF41),
+        R.string.not_warm to Color(0xFF003287),
+        R.string.geometry to Color(0xFFD2691E),
+        R.string.water to Color(0xFF00DAC7),
     )
 
     Dialog(onDismissRequest = { onDismiss() }) {
@@ -68,7 +68,7 @@ fun ReasonsPopupForSockets(onDismiss: () -> Unit,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = stringResource(R.string.choose_machine),
+                            text = stringResource(R.string.select_reason),
                             textAlign = TextAlign.Start,
                             style = TextStyle(
                                 fontSize = 22.sp,

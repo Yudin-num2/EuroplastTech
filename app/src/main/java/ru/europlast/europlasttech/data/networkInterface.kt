@@ -1,6 +1,11 @@
 package ru.europlast.europlasttech.data
 
+import kotlinx.serialization.json.Json
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -28,6 +33,39 @@ interface NetworkInterface {
         @Query("tech_card_name") techCardName: String,
     ): Response<TechCard>
 
+    @GET("current_sockets")
+    suspend fun getCurrentSockets(
+        @Query("machine_name") machineName: String,
+    ): Response<CurrentSocketsState>
+
+    @PATCH("current_sockets")
+    suspend fun updateSockets(
+        @Query("machine_name") machineName: String,
+        @Query("sockets_state") socketsState: String,
+    ): Response<Any>
+}
+
+
+object RetrofitInstance {
+    private val interceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+
+    private val client = OkHttpClient.Builder()
+        .addInterceptor(interceptor)
+        .build()
+
+    private val retrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .client(client)
+            .baseUrl("http://10.0.2.2:8000")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    val networkAPI: NetworkInterface by lazy {
+        retrofit.create(NetworkInterface::class.java)
+    }
 }
 
 
