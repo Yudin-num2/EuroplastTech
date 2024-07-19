@@ -6,8 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,26 +27,27 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun Sockets48(machineName: String) {
+fun Sockets72(machineName: String) {
     val viewModel: SocketViewModel = viewModel()
     var showDialog by remember { mutableStateOf(false) }
     var selectedSocketIndex by remember { mutableIntStateOf(1) }
     val isLoading by viewModel.isLoading.collectAsState()
+    val scrollState = rememberScrollState()
 
     Box(
         Modifier
             .padding(start = 16.dp, end = 16.dp, bottom = 110.dp)
-
-            .background(color = Color.Transparent),
+            .background(color = Color.Transparent)
+            .verticalScroll(scrollState),
         contentAlignment = Alignment.Center
     ) {
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.padding(20.dp))
         } else {
             Column(
-                verticalArrangement = Arrangement.Top
+                verticalArrangement = Arrangement.Center
             ) {
-                for (i in 0 until 12) {
+                for (i in 0 until 18) {
                     Row {
                         for (j in 0 until 4) {
                             val index = (i * 4) + j

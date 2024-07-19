@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -129,7 +130,7 @@ fun SocketScreen(
                             popUpTo("current_tasks_screen") { inclusive = true }
                         }
                     }
-                    .zIndex(10f),
+                    .zIndex(5f),
             )
             Text(
                 text = machineName,
@@ -148,7 +149,7 @@ fun SocketScreen(
                     .width(30.dp)
                     .height(30.dp)
                     .clickable { isInfoDialogVisible = true }
-                    .zIndex(10f),
+                    .zIndex(5f),
             )
         }
 
@@ -178,31 +179,31 @@ fun SocketScreen(
                 )
             )
         }
-
-        ScrollableTabRow(
-            modifier = Modifier
-                .height(56.dp)
-                .zIndex(2f),
-            selectedTabIndex = pagerState.currentPage,
-            indicator = indicator,
-            containerColor = EvpCyan,
-            divider = {},
-        ) {
-            list?.forEachIndexed { index, title ->
-                Tab(
-                    modifier = Modifier
-                        .zIndex(2f),
-                    text = { Text(text = title) },
-                    selected = pagerState.currentPage == index,
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(index)
-                        }
-                    },
-                )
-            }
-        }
         if (list != null) {
+            ScrollableTabRow(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .height(56.dp)
+                    .zIndex(2f),
+                selectedTabIndex = pagerState.currentPage,
+                indicator = indicator,
+                containerColor = EvpCyan,
+                divider = {},
+            ) {
+                list.forEachIndexed { index, title ->
+                    Tab(
+                        modifier = Modifier
+                            .zIndex(2f),
+                        text = { Text(text = title) },
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                        },
+                    )
+                }
+            }
             HorizontalPager(
                 modifier = Modifier
                     .zIndex(1f)
@@ -211,13 +212,21 @@ fun SocketScreen(
                 state = pagerState,
             ) { page ->
                 Box(
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
+//                    modifier = Modifier.padding(top = 100.dp)
+
                 ) {
                     if (machineName == "Telerobot 3") {
                         when (page) {
                             0 -> Sockets64("Lid")
                             1 -> Sockets64("Frame")
                             2 -> Sockets64("Cutter")
+                        }
+                    } else if(machineName == "HeliCap"){
+                        when (page) {
+                            0 -> Sockets48("Lid")
+                            1 -> Sockets48("Frame")
+                            2 -> Sockets48("Cutter")
                         }
                     } else {
                         when (page) {
@@ -229,11 +238,21 @@ fun SocketScreen(
                             5 -> Sockets12("Cutter12")
                         }
                     }
+
+
                 }
             }
         } else {
-            //TODO глянь количество гнёзд на всех машинах (ручка отличается от других)
-        }
+            Box(modifier = Modifier.padding(top = 100.dp),
+                contentAlignment = Alignment.Center){
+                when(machineName){
+                    "Husky 11" -> Sockets48(machineName = "Husky 11")
+                    "Husky 12" -> Sockets72(machineName = "Husky 12")
+                    "Husky 16" -> Sockets48(machineName = "Husky 16")
+                    "Husky 22" -> Sockets16(machineName = "Husky 22")
+                }}
+
+        }  //TODO Ебаный пиздец с Хаски...
     }
         if(isInfoDialogVisible){ InfoDialog(onDismiss = {isInfoDialogVisible = false}) }
 }
@@ -241,44 +260,45 @@ fun SocketScreen(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun CustomIndicator(tabPositions: List<TabPosition>, pagerState: PagerState) {
-    val transition = updateTransition(pagerState.currentPage, label = "")
-    val indicatorStart by transition.animateDp(
-        transitionSpec = {
-            if (initialState < targetState) {
-                spring(dampingRatio = 1f, stiffness = 50f)
-            } else {
-                spring(dampingRatio = 1f, stiffness = 500f)
-            }
-        }, label = ""
-    ) {
-        tabPositions[it].left
-    }
+fun CustomIndicator(tabPositions: List<TabPosition>, pagerState: PagerState) {
+        val transition = updateTransition(pagerState.currentPage, label = "")
+        val indicatorStart by transition.animateDp(
+            transitionSpec = {
+                if (initialState < targetState) {
+                    spring(dampingRatio = 1f, stiffness = 50f)
+                } else {
+                    spring(dampingRatio = 1f, stiffness = 500f)
+                }
+            }, label = ""
+        ) {
+            tabPositions[it].left
 
-    val indicatorEnd by transition.animateDp(
-        transitionSpec = {
-            if (initialState < targetState) {
-                spring(dampingRatio = 1f, stiffness = 500f)
-            } else {
-                spring(dampingRatio = 1f, stiffness = 50f)
-            }
-        }, label = ""
-    ) {
-        tabPositions[it].right
-    }
+        }
 
-    Box(
-        Modifier
-            .offset(x = indicatorStart)
-            .wrapContentSize(align = Alignment.CenterStart)
-            .width(indicatorEnd - indicatorStart)
-            .padding(2.dp)
-            .fillMaxSize()
-            .background(color = SocketTabIndicatorBG, RoundedCornerShape(50))
-            .border(BorderStroke(2.dp, SocketTabIndicatorBorder), RoundedCornerShape(50))
-            .zIndex(1f)
+        val indicatorEnd by transition.animateDp(
+            transitionSpec = {
+                if (initialState < targetState) {
+                    spring(dampingRatio = 1f, stiffness = 500f)
+                } else {
+                    spring(dampingRatio = 1f, stiffness = 50f)
+                }
+            }, label = ""
+        ) {
+            tabPositions[it].right
+        }
 
-    )
+        Box(
+            Modifier
+                .offset(x = indicatorStart)
+                .wrapContentSize(align = Alignment.CenterStart)
+                .width(indicatorEnd - indicatorStart)
+                .padding(2.dp)
+                .fillMaxSize()
+                .background(color = SocketTabIndicatorBG, RoundedCornerShape(50))
+                .border(BorderStroke(2.dp, SocketTabIndicatorBorder), RoundedCornerShape(50))
+                .zIndex(1f)
+
+        )
 }
 
 
@@ -334,7 +354,9 @@ fun InfoDialog(onDismiss: () -> Unit) {
                 ) {
                     for ((name, color) in listOfReasons) {
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 3.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(

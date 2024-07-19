@@ -42,7 +42,7 @@ fun Navigation() {
         .build()
     val retrofit = Retrofit.Builder()
         .client(client)
-        .baseUrl("http://10.0.2.2:8000")
+        .baseUrl("http://10.0.3.2:8000") /*10.0.2.2:8000  for Android Studio Emulator*/
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val networkAPI = retrofit.create(NetworkInterface::class.java)
@@ -77,8 +77,7 @@ fun Navigation() {
             machineName?.let { title ->
                 SocketScreen(
                     machineName = title,
-                    list = listOf("Lid", "Frame", "Cutter"),
-                    navController
+                    navController = navController
                 )
             }
         }

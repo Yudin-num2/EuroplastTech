@@ -245,12 +245,14 @@ fun CustomDialog(
                     items(machines){machineName ->
                         Button(
                             onClick = {
+                                onDismiss()
                                 if(machineName == "Telerobot 1"){
-
                                     navController.navigate(Screens.SocketsT01Screen.route)
-                                }else if(machineName.contains("Husky")){
-                                    navController.navigate(Screens.SocketsHusky.route)
-                                }else{ navController.navigate(
+                                } else if(machineName.contains("Husky")){
+                                    navController.navigate(
+                                        Screens.SocketsHusky.route.replace(
+                                            "{machine_name}", machineName))
+                                } else{ navController.navigate(
                                 Screens.SocketsT02_7_Screen.route.replace(
                                     "{machine_name}", machineName)) }},
                             modifier = Modifier

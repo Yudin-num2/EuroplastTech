@@ -20,4 +20,16 @@ data class CurrentSocketsState(
 
     @SerializedName("Cutter12")
     val cutter12: Map<String, String>? = null,
-)
+
+    @SerializedName("Husky 11")
+    val husky11: Map<String, String>? = null,
+
+    @SerializedName("Husky 12")
+    val husky12: Map<String, String>? = null,
+
+    @SerializedName("Husky 16")
+    val husky16: Map<String, String>? = null,
+
+    @SerializedName("Husky 22")
+    val husky22: Map<String, String>? = null,
+    )

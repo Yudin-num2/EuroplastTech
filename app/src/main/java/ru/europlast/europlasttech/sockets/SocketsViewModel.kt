@@ -36,7 +36,6 @@ class SocketViewModel(machineName: String) : ViewModel() {
     )
     init {
             loadCurrentSocketsState(machineName)
-        Log.d("viewModel | init", machineName)
     }
 
     private fun loadCurrentSocketsState(machineName: String) {
@@ -52,10 +51,12 @@ class SocketViewModel(machineName: String) : ViewModel() {
                 _buttonColors.value = CurrentSocketsState()
             }
             _isLoading.value = false
+
         }
     }
 
     fun getColorForSocket(category: String, index: Int): Color {
+
         val socketMap = when (category) {
             "Lid" -> _buttonColors.value.lid
             "Frame" -> _buttonColors.value.frame
@@ -63,6 +64,10 @@ class SocketViewModel(machineName: String) : ViewModel() {
             "Lid12" -> _buttonColors.value.lid12
             "Frame12" -> _buttonColors.value.frame12
             "Cutter12" -> _buttonColors.value.cutter12
+            "Husky 11" -> _buttonColors.value.husky11
+            "Husky 12" -> _buttonColors.value.husky12
+            "Husky 16" -> _buttonColors.value.husky16
+            "Husky 22" -> _buttonColors.value.husky22
             else -> null
         }
         val colorKey = socketMap?.get(index.toString())
@@ -77,6 +82,10 @@ class SocketViewModel(machineName: String) : ViewModel() {
             "Lid12" -> _buttonColors.value.lid12?.toMutableMap()
             "Frame12" -> _buttonColors.value.frame12?.toMutableMap()
             "Cutter12" -> _buttonColors.value.cutter12?.toMutableMap()
+            "Husky 11" -> _buttonColors.value.husky11?.toMutableMap()
+            "Husky 12" -> _buttonColors.value.husky12?.toMutableMap()
+            "Husky 16" -> _buttonColors.value.husky16?.toMutableMap()
+            "Husky 22" -> _buttonColors.value.husky22?.toMutableMap()
             else -> null
         }
 
@@ -91,6 +100,10 @@ class SocketViewModel(machineName: String) : ViewModel() {
                     "Lid12" -> _buttonColors.value.copy(lid12 = it)
                     "Frame12" -> _buttonColors.value.copy(frame12 = it)
                     "Cutter12" -> _buttonColors.value.copy(cutter12 = it)
+                    "Husky 11" -> _buttonColors.value.copy(husky11 = it)
+                    "Husky 12" -> _buttonColors.value.copy(husky12 = it)
+                    "Husky 16" -> _buttonColors.value.copy(husky16 = it)
+                    "Husky 22" -> _buttonColors.value.copy(husky22 = it)
                     else -> _buttonColors.value
                 }
                 _buttonColors.value = newState
@@ -99,19 +112,19 @@ class SocketViewModel(machineName: String) : ViewModel() {
     }
 
 
-    private fun updateColor(list: MutableList<String>, index: Int, color: String) {
-        if (index in list.indices) {
-            list[index] = color
-        } else if (index == list.size) {
-            list.add(color)
-        } else {
-            // Если индекс больше размера списка, добавляем пустые строки до нужного индекса
-            while (list.size < index) {
-                list.add("")
-            }
-            list.add(color)
-        }
-    }
+//    private fun updateColor(list: MutableList<String>, index: Int, color: String) {
+//        if (index in list.indices) {
+//            list[index] = color
+//        } else if (index == list.size) {
+//            list.add(color)
+//        } else {
+//            // Если индекс больше размера списка, добавляем пустые строки до нужного индекса
+//            while (list.size < index) {
+//                list.add("")
+//            }
+//            list.add(color)
+//        }
+//    }
 }
 
 
