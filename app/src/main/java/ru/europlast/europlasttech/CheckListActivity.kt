@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import ru.europlast.europlasttech.data.NetworkInterface
+import ru.europlast.europlasttech.data.RetrofitInstance.networkAPI
 import ru.europlast.europlasttech.data.TechCard
 import ru.europlast.europlasttech.ui.theme.SaveAndExitBtn
 import ru.europlast.europlasttech.ui.theme.SaveAndExitBtnBorder
@@ -74,7 +75,6 @@ class CheckListActivity : ComponentActivity() {
 @Composable
 fun CheckListScreen(
     navController: NavController,
-    networkAPI: NetworkInterface,
     techCard: String?) {
     var operations by remember { mutableStateOf<TechCard?>(null) }
 

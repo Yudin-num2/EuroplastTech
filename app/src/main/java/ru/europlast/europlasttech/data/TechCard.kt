@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class TechCard(
     @SerializedName("Сборочный комплекс")
-    val telerobot: List<String>? = null,
+    val telerobot: List<String> = emptyList(),
 
     @SerializedName("Прессформа")
     val pressform: List<String>? = null,
@@ -17,5 +17,12 @@ data class TechCard(
 
     @SerializedName("ОТК")
     val otk: List<String>? = null,
+    )
 
+data class ChecklistItem(
+    val machineName: String,
+    val text: String,
+    var statusCheckbox: Boolean,
+    var comment: String
 )
+

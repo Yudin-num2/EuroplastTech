@@ -40,7 +40,6 @@ class SocketViewModel(machineName: String) : ViewModel() {
 
     private fun loadCurrentSocketsState(machineName: String) {
         viewModelScope.launch {
-
             val response = networkAPI.getCurrentSockets(machineName)
             if (response.isSuccessful) {
                 val currentState = response.body()
@@ -71,7 +70,7 @@ class SocketViewModel(machineName: String) : ViewModel() {
             else -> null
         }
         val colorKey = socketMap?.get(index.toString())
-        return parseColors[colorKey] ?: Color.Black
+        return parseColors[colorKey] ?: Color.Gray
     }
 
     fun updateSocketColor(category: String, index: Int, colorKey: Color) {
@@ -110,21 +109,6 @@ class SocketViewModel(machineName: String) : ViewModel() {
             }
         }
     }
-
-
-//    private fun updateColor(list: MutableList<String>, index: Int, color: String) {
-//        if (index in list.indices) {
-//            list[index] = color
-//        } else if (index == list.size) {
-//            list.add(color)
-//        } else {
-//            // Если индекс больше размера списка, добавляем пустые строки до нужного индекса
-//            while (list.size < index) {
-//                list.add("")
-//            }
-//            list.add(color)
-//        }
-//    }
 }
 
 

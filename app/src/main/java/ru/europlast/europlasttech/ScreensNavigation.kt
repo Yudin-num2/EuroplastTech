@@ -30,6 +30,7 @@ sealed class Screens(val route: String) {
     data object AddDefectScreen : Screens("add_defect_screen")
     data object AddAnomalyScreen : Screens("add_anomaly_screen")
     data object CheckListScreen : Screens("check_list_screen")
+    data object Test: Screens("test")
 }
 
 
@@ -50,7 +51,7 @@ fun Navigation() {
 
     NavHost(navController = navController, startDestination = Screens.LoginScreen.route) {
         composable(Screens.LoginScreen.route) {
-            LoginScreen(navController, networkAPI)
+            LoginScreen(navController)
         }
         composable(Screens.MainScreen.route) {
             MainScreen(navController)
@@ -96,8 +97,11 @@ fun Navigation() {
         ) {navBackStackEntry ->
             val techCard = navBackStackEntry.arguments?.getString("techCard")
             techCard?.let { techCardName ->
-                CheckListScreen(navController, networkAPI, techCardName)
+                CheckListScreen(navController, techCardName)
             }
+        }
+        composable(Screens.Test.route) {
+            CheckListScr()
         }
 
     }

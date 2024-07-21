@@ -55,6 +55,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.europlast.europlasttech.data.NetworkInterface
+import ru.europlast.europlasttech.data.RetrofitInstance.networkAPI
 import ru.europlast.europlasttech.ui.theme.EvpCyan
 import ru.europlast.europlasttech.ui.theme.WhiteTransparent
 import java.net.ConnectException
@@ -71,7 +72,7 @@ class LoginActivity : ComponentActivity() {
 
 
 @Composable
-fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
+fun LoginScreen(navController: NavController) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -79,7 +80,9 @@ fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) {paddingValues ->
         Box(
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
             contentAlignment = Alignment.Center
 
         ) {
@@ -159,7 +162,7 @@ fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
                         keyboardActions = KeyboardActions(
                             onDone = {
                                 keyboardController?.hide()
-                                onAuthClick(navController, networkAPI, login, password, context)
+                                onAuthClick(navController, login, password, context)
                             }),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -172,7 +175,7 @@ fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
                 Spacer(modifier = Modifier.height(80.dp))
 
                 Button(
-                    onClick = { onAuthClick(navController, networkAPI, login, password, context) },
+                    onClick = { onAuthClick(navController, login, password, context) },
 
                     modifier = Modifier
                         .fillMaxWidth()
@@ -189,6 +192,9 @@ fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
                     )
 
                 }
+                Button(onClick = { navController.navigate(Screens.Test.route) }) {
+                    Text(text = "TEST BUTTON")
+                }
             }
 
         }
@@ -198,7 +204,7 @@ fun LoginScreen(navController: NavController, networkAPI: NetworkInterface) {
 
 }
 
-fun onAuthClick(navController: NavController, networkAPI: NetworkInterface,
+fun onAuthClick(navController: NavController,
                 login: String, password: String, context: Context){
         if (login == "admin") {
             navController.navigate(Screens.MainScreen.route) {
@@ -212,7 +218,6 @@ fun onAuthClick(navController: NavController, networkAPI: NetworkInterface,
                     )
                     if (response.isSuccessful) {
                         val authResponse = response.body().toString()
-                        println(authResponse)
                         if (authResponse == "{\"details\": \"user not found\"}") {
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(
