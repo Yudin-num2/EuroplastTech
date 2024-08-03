@@ -147,8 +147,10 @@ fun AddAnomalyScreen(navController: NavController) {
                     .width(30.dp)
                     .height(30.dp)
                     .align(Alignment.TopStart)
-                    .clickable { navController.navigate(Screens.MainScreen.route){
-                    popUpTo("add_anomaly_screen") { inclusive = true }}
+                    .clickable {
+                        navController.navigate(Screens.MainScreen.route) {
+                            popUpTo("add_anomaly_screen") { inclusive = true }
+                        }
                     }
                     .zIndex(2f),
             )
@@ -328,7 +330,9 @@ fun AddAnomalyScreen(navController: NavController) {
                     TextField(
                         modifier = Modifier.fillMaxSize(),
                         value = anomalyComment,
-                        onValueChange = {anomalyComment = it})
+                        onValueChange = {anomalyComment = it},
+                        placeholder = { Text(text = "Описание аномалии")}
+                    )
                 }
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(onClick = {

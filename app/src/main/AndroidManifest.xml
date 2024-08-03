@@ -7,9 +7,8 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.CAMERA"/>
-
-
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -22,6 +21,23 @@
         android:theme="@style/Theme.EuroplastTech"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
+        <service
+            android:name=".FCMService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+<!--        <meta-data-->
+<!--            android:name="com.google.firebase.messaging.default_notification_icon"-->
+<!--            android:resource="@drawable/app_icon" />-->
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+<!--        <meta-data-->
+<!--            android:name="com.google.firebase.messaging.default_notification_color"-->
+<!--            android:resource="@color/colorAccent" />-->
+
         <activity
             android:name=".LoginActivity"
             android:exported="true"
@@ -38,10 +54,6 @@
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
 
-<!--        <activity android:name=".sockets.SocketActivity"-->
-<!--            android:exported="true"-->
-<!--            android:screenOrientation="portrait"-->
-<!--            tools:ignore="DiscouragedApi,LockedOrientationActivity" />-->
         <activity android:name=".CurrentTasksActivity"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -54,6 +66,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi" />
+
 
 
     </application>

@@ -295,7 +295,7 @@ fun OneElement(text: String) {
         TextField(
             value = comment,
             onValueChange = { comment = it },
-            textStyle = TextStyle(color = Color.Black),
+            textStyle = TextStyle(color = Color.Black, fontSize = 12.sp),
             maxLines = 1,
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
@@ -305,6 +305,7 @@ fun OneElement(text: String) {
                 onNext = {
                     focusManager.moveFocus(FocusDirection.Down)
                 }),
+            placeholder = {Text(text = "Примечание", fontSize = 14.sp)},
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = 30.dp)

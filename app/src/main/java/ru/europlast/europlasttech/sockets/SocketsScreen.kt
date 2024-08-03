@@ -114,7 +114,7 @@ fun SocketScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(start = 15.dp, end = 15.dp, top = 60.dp)
+                .padding(start = 15.dp, end = 15.dp, top = 75.dp, bottom = 40.dp)
                 .fillMaxWidth()
         ) {
             Icon(
@@ -182,9 +182,10 @@ fun SocketScreen(
         if (list != null) {
             ScrollableTabRow(
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 20.dp, vertical = 15.dp)
                     .height(56.dp)
-                    .zIndex(2f),
+                    .zIndex(2f)
+                    .fillMaxWidth(),
                 selectedTabIndex = pagerState.currentPage,
                 indicator = indicator,
                 containerColor = EvpCyan,
@@ -207,14 +208,12 @@ fun SocketScreen(
             HorizontalPager(
                 modifier = Modifier
                     .zIndex(1f)
-                    .padding(top = 100.dp),
+                    .padding(top = 115.dp),
                 count = list.size,
                 state = pagerState,
             ) { page ->
                 Box(
                     contentAlignment = Alignment.Center,
-//                    modifier = Modifier.padding(top = 100.dp)
-
                 ) {
                     if (machineName == "Telerobot 3") {
                         when (page) {
@@ -243,7 +242,7 @@ fun SocketScreen(
                 }
             }
         } else {
-            Box(modifier = Modifier.padding(top = 100.dp),
+            Box(modifier = Modifier.padding(top = 115.dp),
                 contentAlignment = Alignment.Center){
                 when(machineName){
                     "Husky 11" -> Sockets48(machineName = "Husky 11")

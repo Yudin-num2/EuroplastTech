@@ -55,6 +55,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.messaging.FirebaseMessaging
 import ru.europlast.europlasttech.ui.theme.WhiteTransparent
 
 
@@ -63,11 +64,26 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+
             Navigation()
 
         }
     }
 }
+private fun getToken() {
+    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+        if (!task.isSuccessful) {
+            Log.w("TAG", "Fetching FCM registration token failed", task.exception)
+            return@addOnCompleteListener
+        }
+
+        // Получите новый токен
+        val token = task.result
+        Log.d("TOKEN FCM", "FCM Token: $token")
+        // Здесь вы можете отправить токен на ваш сервер или сохранить его
+    }
+}
+
 @Preview
 @Composable
 fun MainScreen(navController: NavController = rememberNavController()
@@ -85,13 +101,16 @@ fun MainScreen(navController: NavController = rememberNavController()
                 .zIndex(-1f)
         )
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Row {
+                Button(onClick = { getToken() }) {
+                    Text(text = "test btn")
+                }
+
                 Button(
                     onClick = { navController.navigate(Screens.CurrentTasksScreen.route) },
                     modifier = Modifier
                         .padding(horizontal = 40.dp, vertical = 8.dp)
                         .fillMaxWidth(),
-                    elevation = ButtonDefaults.elevatedButtonElevation(10.dp),
+                    elevation = ButtonDefaults.elevatedButtonElevation(15.dp),
                     shape = RoundedCornerShape(100.dp),
                     colors = ButtonDefaults.buttonColors(WhiteTransparent),
                 ) {
@@ -104,16 +123,14 @@ fun MainScreen(navController: NavController = rememberNavController()
                         )
                     )
                 }
-            }
-            Row {
-                Button(
+                 Button(
                     onClick = {
                         isDialogVisible = !isDialogVisible
                     },
                     modifier = Modifier
                         .padding(horizontal = 40.dp, vertical = 8.dp)
                         .fillMaxWidth(),
-                    elevation = ButtonDefaults.elevatedButtonElevation(10.dp),
+                    elevation = ButtonDefaults.elevatedButtonElevation(15.dp),
                     shape = RoundedCornerShape(100.dp),
                     colors = ButtonDefaults.buttonColors(WhiteTransparent),
                 ) {
@@ -124,16 +141,13 @@ fun MainScreen(navController: NavController = rememberNavController()
                         )
                     )
                 }
-            }
 
-
-            Row {
                 Button(
                     onClick = { navController.navigate(Screens.AddDefectScreen.route) },
                     modifier = Modifier
                         .padding(horizontal = 40.dp, vertical = 8.dp)
                         .fillMaxWidth(),
-                    elevation = ButtonDefaults.elevatedButtonElevation(10.dp),
+                    elevation = ButtonDefaults.elevatedButtonElevation(15.dp),
                     shape = RoundedCornerShape(100.dp),
                     colors = ButtonDefaults.buttonColors(WhiteTransparent),
                 ) {
@@ -144,14 +158,12 @@ fun MainScreen(navController: NavController = rememberNavController()
                         )
                     )
                 }
-            }
-            Row {
                 Button(
                     onClick = { navController.navigate(Screens.AddAnomalyScreen.route) },
                     modifier = Modifier
                         .padding(horizontal = 40.dp, vertical = 8.dp)
                         .fillMaxWidth(),
-                    elevation = ButtonDefaults.elevatedButtonElevation(10.dp),
+                    elevation = ButtonDefaults.elevatedButtonElevation(15.dp),
                     shape = RoundedCornerShape(100.dp),
                     colors = ButtonDefaults.buttonColors(WhiteTransparent),
                 ) {
@@ -162,7 +174,6 @@ fun MainScreen(navController: NavController = rememberNavController()
                         )
                     )
                 }
-            }
         }
     }
     if(isDialogVisible){

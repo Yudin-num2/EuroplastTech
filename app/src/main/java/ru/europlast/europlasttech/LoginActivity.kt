@@ -1,5 +1,6 @@
 package ru.europlast.europlasttech
 
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -50,11 +51,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.europlast.europlasttech.data.NetworkInterface
 import ru.europlast.europlasttech.data.RetrofitInstance.networkAPI
 import ru.europlast.europlasttech.ui.theme.EvpCyan
 import ru.europlast.europlasttech.ui.theme.WhiteTransparent

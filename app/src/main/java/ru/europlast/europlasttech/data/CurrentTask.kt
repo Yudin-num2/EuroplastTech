@@ -12,7 +12,7 @@ data class CurrentTask(
     val pathtophoto: String,
     val createtime: String,
     val author: String,
-    val spentrepairparts: List<String>?,
+    val spentrepairparts: List<String>? = listOf("", ""),
     val checklist: Json,
 
     )
